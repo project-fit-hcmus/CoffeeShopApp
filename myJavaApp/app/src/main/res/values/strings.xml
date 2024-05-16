@@ -4,4 +4,20 @@
     <string name="fb_login_protocol_scheme">fb1165179318134527</string>
     <string name="facebook_client_token">1bc83cec70c45405cc2009adaedadcfbe</string>
     <string name="default_web_client_id">67005222895-8k12242k9po7chapg66gs4kjkqa4l15q.apps.googleusercontent.com</string>
+
+    <string name="home_item">Home</string>
+    <string name="favorite_item">Favorite</string>
+    <string name="profile_item">Profile</string>
+    <string name="cart_item">Cart</string>
+    <string name="hint_mail">Your Email</string>
+    <string name="hint_location">Your Location</string>
+    <string name="hint_password">Manage Your Password</string>
+    <string name="hint_phonenumber">Your Phone Number</string>
+    <string name="hint_order">My Order</string>
+    <string name="hint_edit_profile">Manage Your Profile</string>
+    <string name="hint_payment">Payment Methods</string>
+    <string name="hint_policy">Private Policy</string>
+    <string name="hint_current_pass">Your Current Password</string>
+    <string name="hint_new_pass">Enter New Password</string>
+    <string name="hint_repeat_pass">Repeat Your Password</string>
 </resources>

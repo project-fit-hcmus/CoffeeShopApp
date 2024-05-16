@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    >
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@color/white"
+        android:drawableStart="@drawable/baseline_arrow_back_ios_24"
+        tools:ignore="MissingConstraints"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="20dp"
+        android:stateListAnimator="@animator/button_animation"
+        android:id="@+id/btnBack"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="title action"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:id="@+id/HeadTitle"
+        android:textColor="@color/main_color"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="-80dp"
+        android:layout_marginBottom="20dp"
+        />
+</LinearLayout>

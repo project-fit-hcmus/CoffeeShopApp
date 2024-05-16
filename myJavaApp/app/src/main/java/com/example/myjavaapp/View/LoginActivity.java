@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Log;
@@ -17,7 +19,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myjavaapp.Model.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -55,6 +63,7 @@ import java.util.Base64;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -109,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
+/*
         //login with facebook
         printHashKey();
         btnFacebook = (LoginButton) findViewById(R.id.btnFacebook);
@@ -137,6 +146,8 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
+        */
 
         //test
 
@@ -234,13 +245,15 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     //trường hợp thông tin đăng nhập hợp lệ
-                    Log.d(TAG,"SignInWithEmailAndPassword:Success");
+                    Log.d(TAG,"SUCCESS: SignInWithEmailAndPassword");
                     FirebaseUser user = mAuth.getCurrentUser();
+                    //lưu thông tin đăng nhập vào firebase
+                    saveToRealtimeDatabase();
                     updateUI(user);
                 }
                 else{
                     //trường hợp thông tin đăng nhập không hợp lệ
-                    Log.d(TAG,"SingInWithEmailAndPassword:Failed");
+                    Log.d(TAG,"FAILED: SingInWithEmailAndPassword");
                     Toast.makeText(LoginActivity.this,"Failed to login!!!",Toast.LENGTH_SHORT).show();
                     updateUI(null);
                 }
@@ -255,9 +268,6 @@ public class LoginActivity extends AppCompatActivity {
         }else{
             //move to home screen
             Intent intent = new Intent(LoginActivity.this, homeActivity.class);
-            Bundle data = new Bundle();
-            data.putString("type","another");
-            intent.putExtras(data);
             startActivity(intent);
         }
     }
@@ -280,7 +290,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    // for facebook login
+    /*
+    // for facebook login (Failed - key hash does not match any stored key hashes)
     public void handleFacebookAccessToken(AccessToken accessToken){
         Log.d(TAG,"HandleFacebookAccessToken:  " + accessToken);
         AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
@@ -293,10 +304,6 @@ public class LoginActivity extends AppCompatActivity {
                     FirebaseUser user = mAuth.getCurrentUser();
                     // xử lý updateUI( gửi intent tới với homeActivity
                     Intent intent = new Intent(LoginActivity.this, homeActivity.class);
-                    Bundle data = new Bundle();
-                    data.putString("name",user.getDisplayName());
-                    data.putString("email",user.getEmail());
-                    intent.putExtras(data);
                     startActivity(intent);
                 }else{
                     //trường hợp đăng nhập bằng facebook thất bại
@@ -319,7 +326,7 @@ public class LoginActivity extends AppCompatActivity {
         }catch(NoSuchAlgorithmException e){
         }
     }
-
+*/
 
 
     // for google login
@@ -329,21 +336,11 @@ public class LoginActivity extends AppCompatActivity {
             String idToken = account.getIdToken();
             String name = account.getDisplayName();
             String email = account.getEmail();
-//            String photo = account.getPhotoUrl().toString();
-            Toast.makeText(LoginActivity.this,"email: " + email, Toast.LENGTH_SHORT).show();
-            Toast.makeText(LoginActivity.this,"idtoken: " + idToken,Toast.LENGTH_SHORT).show();
+
             CreadentialWithGoogleInfo(idToken);
 
-            Bundle bundle = new Bundle();
-            bundle.putString("type","google");
-            bundle.putString("email",email);
-            bundle.putString("name",name);
-            bundle.putString("idtoken",idToken);
-//            bundle.putString("photo",photo);
             Intent intent= new Intent(LoginActivity.this, homeActivity.class);
-            intent.putExtras(bundle);
             // Signed in successfully, show authenticated UI.
-            // updateUI(account);
             startActivity(intent);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -355,29 +352,47 @@ public class LoginActivity extends AppCompatActivity {
 
     //xác thực thông tin người dùng với IdToken từ Google
     public void CreadentialWithGoogleInfo(String idToken){
+        Toast.makeText(LoginActivity.this,"Come to credential with google",Toast.LENGTH_SHORT).show();
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken,null);
-        FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    //đăng nhập thành công, lưu thông tin vào firebase
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    String userID = user.getUid();
-                    String userName = user.getDisplayName();
-                    String userMail = user.getEmail();
-                    String userPhoto = user.getPhotoUrl().toString();
-                    //lưu thông tin vào database
-                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
-                    userRef.child("name").setValue(userName);
-                    userRef.child("email").setValue(userMail);
-                    userRef.child("photoURL").setValue(userPhoto);
-                }
-                else{
-                    Log.w(TAG, "signInResult:failed" );
+        Toast.makeText(LoginActivity.this,"Come to credential with google second time",Toast.LENGTH_SHORT).show();
 
-                }
+        FirebaseAuth.getInstance().signInWithCredential(credential).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(LoginActivity.this,"FAILED: Signin with credential google",Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                saveToRealtimeDatabase();
+                Toast.makeText(LoginActivity.this,"SUCCESS: Signin with credential google",Toast.LENGTH_SHORT).show();
+
             }
         });
+    }
+
+    //lưu thông tin vào realtime firebase
+    public void saveToRealtimeDatabase(){
+
+        FirebaseUser acc = FirebaseAuth.getInstance().getCurrentUser();
+        if (acc != null) {
+            DatabaseReference userIdReference = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(acc.getUid());
+
+            User userData = new User();
+            userData.setUsername(acc.getDisplayName());
+            userData.setPhone("0796728944");
+            userData.setEmail(acc.getEmail());
+            userData.setLocation("Thừa Thiên Huế");
+
+            userIdReference.setValue(userData);
+            Toast.makeText(LoginActivity.this,"Add data success!!",Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(LoginActivity.this,"User is null",Toast.LENGTH_SHORT).show();
+
+        }
+
     }
 
 

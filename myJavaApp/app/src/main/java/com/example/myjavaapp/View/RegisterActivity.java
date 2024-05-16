@@ -58,7 +58,6 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_screen);
-//        FacebookSdk.sdkInitialize(getApplicationContext());
 
         txtPassword = (TextInputEditText) findViewById(R.id.txtPassword);
         txtEmail = (TextInputEditText) findViewById(R.id.txtEmail);
@@ -73,11 +72,6 @@ public class RegisterActivity extends AppCompatActivity {
                 startActivity(new Intent(RegisterActivity.this,LoginActivity.class));
             }
         };
-//        facebook
-//        callbackManager = CallbackManager.Factory.create();
-//        btnFacebook = (LoginButton) findViewById(R.id.btnFacebook);
-//        btnFacebook.setPermissions(Arrays.asList(EMAIL));
-
         // thiết lập cho ClickableSpan
         spannableString.setSpan(clickableSpan,23,27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         // thiết lập span cho textview
@@ -99,28 +93,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        // login with facebook
-        // Initialize Facebook Login button
-        //[code here ... ]
-
-        //callback registration
-//        btnFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-//            @Override
-//            public void onSuccess(LoginResult loginResult) {
-//                Log.d(TAG,"facebook:Success" + loginResult);
-//                handleFacebookAccessToken(loginResult.getAccessToken());
-//            }
-//
-//            @Override
-//            public void onCancel() {
-//                Log.d(TAG,"facebook:Cancel");
-//            }
-//
-//            @Override
-//            public void onError(@NonNull FacebookException e) {
-//                Log.d(TAG,"facebook:Error",e);
-//            }
-//        });
 
 
         
@@ -157,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
                 else{
                     //if singin if failed,display a message to user
                     Log.w(TAG,"createUserWithEmailAndPassword:Failed", task.getException());
-                    Toast.makeText(RegisterActivity.this, "Authentication Failed!!!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Authentication Failed!!! ---- " + task.getException().getMessage(),Toast.LENGTH_SHORT).show();
                     updateUI(null);
                 }
             }
@@ -178,38 +150,5 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        //pass the activity result back to the facebook SDK
-//        callbackManager.onActivityResult(resultCode,resultCode,data);
-//    }
-//    private void handleFacebookAccessToken(AccessToken accessToken){
-//        Log.d(TAG,"HandleFacebookAccessToken" + accessToken);
-//        AuthCredential credential  = FacebookAuthProvider.getCredential(accessToken.getToken());
-//
-//        //ở đây phải làm hàm đăng ký chứ không phải đăng nhập(bởi vì chưa đăng ký nên sẽ không tìm thấy hashkey để đăng nhập vào)
-//        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//            @Override
-//            public void onComplete(@NonNull Task<AuthResult> task) {
-//                if(task.isSuccessful()){
-//                    Log.d(TAG,"SigupWithFacebook:Success");
-//                    FirebaseUser user = mAuth.getCurrentUser();
-//                    updateFBSignUpUI(user);
-//                } else{
-//                    Log.d(TAG,"SignupWithFacebook:Failed");
-//                    Toast.makeText(RegisterActivity.this,"Autentication Failed!!!",Toast.LENGTH_SHORT).show();
-//                    updateFBSignUpUI(null);
-//                }
-//            }
-//        });
-//    }
-//    public void updateFBSignUpUI(FirebaseUser user){
-//        if(user != null){
-//            startActivity(new Intent(RegisterActivity.this, homeActivity.class));
-//        }
-//    }
 
 }

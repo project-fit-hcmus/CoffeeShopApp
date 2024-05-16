@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:orientation="vertical"
+    >
+    <include
+        layout="@layout/top_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editAccHeader"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/main_color"
+        app:layout_constraintTop_toBottomOf="@+id/editAccHeader"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/titleDivider"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/editUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="10dp"
+        android:drawableStart="@drawable/baseline_person_24"
+        android:drawableEnd="@drawable/baseline_mode_edit_outline_24"
+        android:drawablePadding="20dp"
+        android:hint="UserName"
+        android:textColor="@color/light_gray"
+        android:textColorHint="@color/light_gray" />
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        app:dividerColor="@color/light_gray"
+        tools:ignore="MissingConstraints" />
+    <EditText
+        android:id="@+id/editPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="10dp"
+        android:drawableStart="@drawable/baseline_phone_24"
+        android:drawableEnd="@drawable/baseline_mode_edit_outline_24"
+        android:drawablePadding="20dp"
+        android:hint="Phone Number"
+        android:textColor="@color/light_gray"
+        android:textColorHint="@color/light_gray" />
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        app:dividerColor="@color/light_gray"
+        tools:ignore="MissingConstraints" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/groupEditPhoto"
+        tools:ignore="MissingConstraints"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="30dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="User Photo: "
+            android:textColor="@color/light_gray"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:gravity="center_vertical"
+            android:textSize="15dp"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/userPhoto"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/baseline_person_24"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="3dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnAddPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/choose_button"
+            android:stateListAnimator="@animator/button_animation"
+            android:drawableStart="@drawable/baseline_add_to_photos_24"
+            android:text="Replace photo"
+
+            android:textColor="@color/light_gray" />
+    </LinearLayout>
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        app:dividerColor="@color/light_gray"
+        tools:ignore="MissingConstraints" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/groupEditLocation"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="30dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Location: "
+            android:textColor="@color/light_gray"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textSize="15dp"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Replace Location"
+            android:id="@+id/btnAddLocation"
+            android:stateListAnimator="@animator/button_animation"
+            android:textColor="@color/light_gray"
+            android:drawableStart="@drawable/baseline_location_on_24_red"
+            android:background="@drawable/choose_button"
+            android:layout_marginLeft="40dp"/>
+
+    </LinearLayout>
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        app:dividerColor="@color/light_gray"
+        tools:ignore="MissingConstraints" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/groupButtonConfirm"
+        app:layout_constraintTop_toBottomOf="@+id/groupEditLocation"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_margin="30dp"
+        android:orientation="horizontal" >
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCancel"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:background="@drawable/botron_button"
+            android:text="Cancel"
+            android:textColor="@color/white"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:stateListAnimator="@animator/button_animation"
+            tools:ignore="MissingConstraints" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSave"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:background="@drawable/botron_button"
+            android:text="Save"
+            android:textColor="@color/white"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintRight_toRightOf="parent"
+            android:stateListAnimator="@animator/button_animation"
+            tools:ignore="MissingConstraints" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

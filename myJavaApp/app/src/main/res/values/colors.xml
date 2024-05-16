@@ -9,4 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="btnColor">#f4791f</color>
     <color name="light_gray">#8F9698</color>
+    <color name="main_color">#77462C</color>
+    <color name="green">#00FF00</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="red">#FF0000</color>
 </resources>
+
+<!--    422110-->
