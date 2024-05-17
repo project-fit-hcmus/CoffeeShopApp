@@ -43,6 +43,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+//import com.google.firebase.storage.FirebaseStorage;
+//import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.type.LatLng;
@@ -53,7 +55,7 @@ import java.util.UUID;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditAccountActivity extends AppCompatActivity implements View.OnClickListener {
-    private TextView title;
+    private TextView title,txtLocation;
     private EditText txtUsername, txtPhoneNumber;
     private FirebaseUser user;
     private AppCompatButton btnChoosePhoto, btnChooseLocation,btnSave,btnCancel, btnBack;
@@ -83,6 +85,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
         title = (TextView) findViewById(R.id.HeadTitle);
         txtUsername = (EditText) findViewById(R.id.editUsername);
         txtPhoneNumber = (EditText) findViewById(R.id.editPhoneNumber);
+        txtLocation = (TextView) findViewById(R.id.txtUserLocation);
         btnChoosePhoto = (AppCompatButton)findViewById(R.id.btnAddPhoto);
         btnChooseLocation = (AppCompatButton) findViewById(R.id.btnAddLocation);
         btnSave = (AppCompatButton) findViewById(R.id.btnSave);
@@ -92,6 +95,25 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
         user = FirebaseAuth.getInstance().getCurrentUser();
         title.setText("Manage Account");
         txtUsername.setText(user.getDisplayName());
+        //get user information
+         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+         userRef.addValueEventListener(new ValueEventListener() {
+             @Override
+             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                 String phone = snapshot.child("phoneNumber").getValue(String.class);
+                 String location = snapshot.child("location").getValue(String.class);
+                 String username = snapshot.child("username").getValue(String.class);
+                 txtUsername.setHint(username);
+                 txtPhoneNumber.setHint(phone);
+                 txtLocation.setHint(location);
+             }
+
+             @Override
+             public void onCancelled(@NonNull DatabaseError error) {
+
+             }
+         });
+
 //        userImage.setImageURI(user.getPhotoUrl());
          Picasso.get().load(user.getPhotoUrl()).into(userImage);
 
@@ -121,6 +143,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
         }
         if(v.getId() == R.id.btnAddLocation){
             // algorithm???
+//            startActivity(new Intent(EditAccountActivity.this,ChooseLocationActivity.class));
         }
         if(v.getId() == R.id.btnSave){
             //update user photo
@@ -157,6 +180,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
                             User uInfo = snapshot.getValue(User.class);
                             if(uInfo != null){
                                 uInfo.setPhone(txtPhoneNumber.getText().toString());
+                                uInfo.setUsername(txtUsername.getText().toString());
                             }
                             userRefId.setValue(uInfo);
                             Log.d("Realtime","Update phone successful!!!");

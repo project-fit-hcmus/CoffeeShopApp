@@ -29,7 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-//chưa test
+//success
 public class ChangePasswordActivity extends AppCompatActivity implements View.OnClickListener {
     private TextInputEditText edtOldPass, edtNewPass, edtRepeat;
     private AppCompatButton btnSave, btnCancel, btnBack;

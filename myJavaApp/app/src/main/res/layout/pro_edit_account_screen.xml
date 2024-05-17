@@ -72,15 +72,8 @@
         android:layout_marginTop="15dp"
         android:layout_marginLeft="30dp"
         android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="User Photo: "
-            android:textColor="@color/light_gray"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:gravity="center_vertical"
-            android:textSize="15dp"/>
+
+
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/userPhoto"
@@ -117,14 +110,17 @@
         android:layout_marginTop="15dp"
         android:layout_marginLeft="30dp"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Location: "
-            android:textColor="@color/light_gray"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:textSize="15dp"/>
+            android:id="@+id/txtUserLocation"
+            android:text="Your location Location"
+            android:textColor="@color/light_gray"
+            android:textSize="15dp" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

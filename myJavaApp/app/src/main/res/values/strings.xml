@@ -4,6 +4,7 @@
     <string name="fb_login_protocol_scheme">fb1165179318134527</string>
     <string name="facebook_client_token">1bc83cec70c45405cc2009adaedadcfbe</string>
     <string name="default_web_client_id">67005222895-8k12242k9po7chapg66gs4kjkqa4l15q.apps.googleusercontent.com</string>
+    <string name="location_api">AIzaSyCMaU9sVUpV5fKcg6SPLipgvXtC_02gxF4</string>
 
     <string name="home_item">Home</string>
     <string name="favorite_item">Favorite</string>

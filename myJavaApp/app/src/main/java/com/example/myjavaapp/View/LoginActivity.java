@@ -23,6 +23,7 @@ import com.example.myjavaapp.Model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -118,6 +119,196 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+        // google login
+        //tạo thực thể yêu cầu đăng nhập bằng google
+        GoogleSignInOptions gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        btnGoogle = (SignInButton) findViewById(R.id.btnGoogle);
+        btnGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = googleSignInClient.getSignInIntent();
+                startActivityForResult(intent,RC_SIGN_IN);
+            }
+        });
+
+    }
+
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Check for existing Google Sign In account, if the user is already signed in
+        // the GoogleSignInAccount will be non-null.
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        //updateUI(account);
+        if(account != null)
+            Toast.makeText(LoginActivity.this,"Already login!!!",Toast.LENGTH_SHORT).show();
+    }
+
+    //login with email và password
+    public void LoginToAccount(){
+        mAuth.signInWithEmailAndPassword(txtEmail.getText().toString(),txtPassword.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    //trường hợp thông tin đăng nhập hợp lệ
+                    Log.d(TAG,"SUCCESS: SignInWithEmailAndPassword");
+                    FirebaseUser user = mAuth.getCurrentUser();
+
+                    updateUI(user);
+                }
+                else{
+                    //trường hợp thông tin đăng nhập không hợp lệ
+                    Log.d(TAG,"FAILED: SingInWithEmailAndPassword");
+                    Toast.makeText(LoginActivity.this,"Email or Password may be wrong!!",Toast.LENGTH_SHORT).show();
+                    updateUI(null);
+                }
+            }
+        });
+    }
+
+    public void updateUI(FirebaseUser user){
+        if(user == null){
+            txtPassword.setText("");
+            txtEmail.setText("");
+        }else{
+            //move to home screen
+            Intent intent = new Intent(LoginActivity.this, homeActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RC_SIGN_IN){          // result for login by Google
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            if(task.isSuccessful()) {
+                handleSignInResult(task);
+            }else{
+                Toast.makeText(LoginActivity.this,"Failed to log in with google!!!",Toast.LENGTH_SHORT).show();
+            }
+
+        }else  // result for login by Facebook
+            callbackManager.onActivityResult(resultCode,resultCode,data);
+
+    }
+
+
+
+    // for google login
+    public void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            String idToken = account.getIdToken();
+            String name = account.getDisplayName();
+            String email = account.getEmail();
+
+            CreadentialWithGoogleInfo(idToken);
+
+            Intent intent= new Intent(LoginActivity.this, homeActivity.class);
+            // Signed in successfully, show authenticated UI.
+            startActivity(intent);
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            updateUI(null);
+        }
+    }
+
+    //xác thực thông tin người dùng với IdToken từ Google
+    public void CreadentialWithGoogleInfo(String idToken){
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken,null);
+
+        FirebaseAuth.getInstance().signInWithCredential(credential).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(LoginActivity.this,"FAILED: Signin with credential google",Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                saveToRealtimeDatabase();
+                Toast.makeText(LoginActivity.this,"SUCCESS: Signin with credential google",Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    //lưu thông tin vào realtime firebase
+    public void saveToRealtimeDatabase(){
+
+        FirebaseUser acc = FirebaseAuth.getInstance().getCurrentUser();
+        if (acc != null) {
+            User userData = new User();
+            userData.setUsername(acc.getDisplayName());
+            userData.setPhone("0796728944");
+            userData.setEmail(acc.getEmail());
+            userData.setLocation("Thừa Thiên Huế");
+            // kiểm tra xem userId đã tồn tại trong realtime firebase hay chưa?
+
+            if(!checkExistInRealtime(acc.getUid())){
+                FirebaseDatabase.getInstance().getReference("users")
+                        .child(acc.getUid()).setValue(userData);
+//                Toast.makeText(LoginActivity.this,"SUCCESS: User exists!!",Toast.LENGTH_SHORT).show();
+            }
+            else{
+//                Toast.makeText(LoginActivity.this,"FAILED: User is save before!!",Toast.LENGTH_SHORT).show();
+
+            }
+
+
+        }
+        else{
+            Toast.makeText(LoginActivity.this,"FAILED: User is null!!",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public boolean checkExistInRealtime(String key){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
+        final boolean[] result = {false};
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            public boolean check = false;
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.hasChild(key)){
+                    check = true;
+                    result[0] = true;
+                }
+                else{
+                    check = false;
+                    result[0] = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(LoginActivity.this,"ERROR: Lỗi truy vấn dữ liệu",Toast.LENGTH_SHORT).show();
+
+            }
+
+        });
+        return result[0];
+    }
+}
+
+
+
+
+
+
+//problem key hash in authentication facebook: https://github.com/facebookarchive/react-native-fbsdk/issues/424
+
+
 /*
         //login with facebook
         printHashKey();
@@ -149,7 +340,7 @@ public class LoginActivity extends AppCompatActivity {
 
         */
 
-        //test
+//test
 
 //        AccessToken accessToken = AccessToken.getCurrentAccessToken();
 //        if(accessToken != null && !accessToken.isExpired()){
@@ -207,90 +398,8 @@ public class LoginActivity extends AppCompatActivity {
 //        });
 
 
-        // google login
-        //tạo thực thể yêu cầu đăng nhập bằng google
-        GoogleSignInOptions gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        btnGoogle = (SignInButton) findViewById(R.id.btnGoogle);
-        btnGoogle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = googleSignInClient.getSignInIntent();
-                startActivityForResult(intent,RC_SIGN_IN);
-            }
-        });
-
-    }
-
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        //updateUI(account);
-        if(account != null)
-            Toast.makeText(LoginActivity.this,"Already login!!!",Toast.LENGTH_SHORT).show();
-    }
-
-    public void LoginToAccount(){
-        mAuth.signInWithEmailAndPassword(txtEmail.getText().toString(),txtPassword.getText().toString()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    //trường hợp thông tin đăng nhập hợp lệ
-                    Log.d(TAG,"SUCCESS: SignInWithEmailAndPassword");
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    //lưu thông tin đăng nhập vào firebase
-                    saveToRealtimeDatabase();
-                    updateUI(user);
-                }
-                else{
-                    //trường hợp thông tin đăng nhập không hợp lệ
-                    Log.d(TAG,"FAILED: SingInWithEmailAndPassword");
-                    Toast.makeText(LoginActivity.this,"Failed to login!!!",Toast.LENGTH_SHORT).show();
-                    updateUI(null);
-                }
-            }
-        });
-    }
-
-    public void updateUI(FirebaseUser user){
-        if(user == null){
-            txtPassword.setText("");
-            txtEmail.setText("");
-        }else{
-            //move to home screen
-            Intent intent = new Intent(LoginActivity.this, homeActivity.class);
-            startActivity(intent);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RC_SIGN_IN){          // result for login by Google
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            if(task.isSuccessful()) {
-                handleSignInResult(task);
-            }else{
-                Toast.makeText(LoginActivity.this,"Failed to log in with google!!!",Toast.LENGTH_SHORT).show();
-            }
-
-        }else  // result for login by Facebook
-            callbackManager.onActivityResult(resultCode,resultCode,data);
-
-    }
-
-    /*
+ /*
     // for facebook login (Failed - key hash does not match any stored key hashes)
     public void handleFacebookAccessToken(AccessToken accessToken){
         Log.d(TAG,"HandleFacebookAccessToken:  " + accessToken);
@@ -327,77 +436,3 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 */
-
-
-    // for google login
-    public void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            String idToken = account.getIdToken();
-            String name = account.getDisplayName();
-            String email = account.getEmail();
-
-            CreadentialWithGoogleInfo(idToken);
-
-            Intent intent= new Intent(LoginActivity.this, homeActivity.class);
-            // Signed in successfully, show authenticated UI.
-            startActivity(intent);
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-            updateUI(null);
-        }
-    }
-
-    //xác thực thông tin người dùng với IdToken từ Google
-    public void CreadentialWithGoogleInfo(String idToken){
-        Toast.makeText(LoginActivity.this,"Come to credential with google",Toast.LENGTH_SHORT).show();
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken,null);
-        Toast.makeText(LoginActivity.this,"Come to credential with google second time",Toast.LENGTH_SHORT).show();
-
-        FirebaseAuth.getInstance().signInWithCredential(credential).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(LoginActivity.this,"FAILED: Signin with credential google",Toast.LENGTH_SHORT).show();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-            @Override
-            public void onSuccess(AuthResult authResult) {
-                saveToRealtimeDatabase();
-                Toast.makeText(LoginActivity.this,"SUCCESS: Signin with credential google",Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
-
-    //lưu thông tin vào realtime firebase
-    public void saveToRealtimeDatabase(){
-
-        FirebaseUser acc = FirebaseAuth.getInstance().getCurrentUser();
-        if (acc != null) {
-            DatabaseReference userIdReference = FirebaseDatabase.getInstance().getReference()
-                    .child("users")
-                    .child(acc.getUid());
-
-            User userData = new User();
-            userData.setUsername(acc.getDisplayName());
-            userData.setPhone("0796728944");
-            userData.setEmail(acc.getEmail());
-            userData.setLocation("Thừa Thiên Huế");
-
-            userIdReference.setValue(userData);
-            Toast.makeText(LoginActivity.this,"Add data success!!",Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(LoginActivity.this,"User is null",Toast.LENGTH_SHORT).show();
-
-        }
-
-    }
-
-
-}
-
-
-
-//problem key hash in authentication facebook: https://github.com/facebookarchive/react-native-fbsdk/issues/424

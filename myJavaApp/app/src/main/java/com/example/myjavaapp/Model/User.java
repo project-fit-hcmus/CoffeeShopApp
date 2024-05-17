@@ -6,7 +6,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 public class User {
 
-    private String username;
+    private String username;            // maybe not necessary
     private String email;
     private String phonenumber;
     private String location;

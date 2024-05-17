@@ -36,7 +36,7 @@ android {
 
 dependencies {
 
-    //noinspection GradleCompatible
+    //noinspection GradleCompatible,GradleCompatible
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.google.firebase:firebase-auth:23.0.0")
@@ -51,7 +51,7 @@ dependencies {
 
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-auth")
+//    implementation("com.google.firebase:firebase-auth")
 
 //    implementation ("com.facebook.android:facebook-login:latest.release"
     implementation ("com.facebook.android:facebook-android-sdk:latest.release")
@@ -78,6 +78,8 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:2.1.0")
 
     //using gooole location api
+
+//    //noinspection GradleCompatible
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation ("com.google.android.gms:play-services-location:17.0.0")
     testImplementation ("junit:junit:4.12")

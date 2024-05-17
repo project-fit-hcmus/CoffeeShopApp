@@ -18,12 +18,15 @@ import com.example.myjavaapp.Model.User;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.ProfileAction.ChangePasswordActivity;
 import com.example.myjavaapp.View.ProfileAction.EditAccountActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -37,7 +40,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private TextView txtEmail;
     private AppCompatButton btnLogout;
     private AppCompatButton btnManageAcc, btnPayment, btnManagePass, btnMyOrder, btnPolicy;
-    private TextView userPhoneNumber;
+    private TextView userPhoneNumber, userLocation;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,43 +58,40 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         btnManageAcc = (AppCompatButton) findViewById(R.id.btnEditAccount);
         btnMyOrder = (AppCompatButton) findViewById(R.id.btnOrder);
         userPhoneNumber = (TextView) findViewById(R.id.txtUserPhoneNumber);
+        userLocation = (TextView) findViewById(R.id.txtUserLocation);
         Uri photo = user.getPhotoUrl();
 
 
 
         if(photo != null){
-            Toast.makeText(ProfileActivity.this, "Have photo profile", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(ProfileActivity.this, "Have photo profile", Toast.LENGTH_SHORT).show();
             // convert to drawable image
             Picasso.get().load(photo).into(userAvatar);
         }
         else{
-            Toast.makeText(ProfileActivity.this, "No photo profile", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(ProfileActivity.this, "No photo profile", Toast.LENGTH_SHORT).show();
         }
         userName.setText(user.getDisplayName());
         txtEmail.setText(user.getEmail());
 
-        // đọc và hiển thị thông tin số điện thoại người dùng (wrong)
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users");
-        DatabaseReference userRefId = userRef.child(user.getUid());
-        //update phonenumber
-        userRefId.addListenerForSingleValueEvent(new ValueEventListener() {
+        // đọc và hiển thị thông tin số điện thoại/địa chỉ của người dùng
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    User uInfo = snapshot.getValue(User.class);
-                    userPhoneNumber.setText(uInfo.getPhoneNumber());
-                    Log.d("Realtime","Update phone successful!!!");
-                }
-                else{
-                    Log.d("Realtime","User not found!!!");
-                }
+                String phone = snapshot.child("phoneNumber").getValue(String.class);
+                String location = snapshot.child("location").getValue(String.class);
+                userPhoneNumber.setText(phone);
+                userLocation.setText(location);
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("firebase", "Error retrieving user information", error.toException());
+
             }
         });
+
         btnLogout.setOnClickListener(this);
         btnPolicy.setOnClickListener(this);
         btnPayment.setOnClickListener(this);

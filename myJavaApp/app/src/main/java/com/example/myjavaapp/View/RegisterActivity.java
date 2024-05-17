@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.example.myjavaapp.Model.User;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.register.facebookActivity;
 import com.facebook.AccessToken;
@@ -37,6 +38,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 
@@ -119,11 +121,13 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    //add credential
-
                     //sign in success, updated UI with user's information
                     Log.d(TAG,"createUserWithEmailAndPassword:Success");
                     FirebaseUser user=mAuth.getCurrentUser();
+
+                    //test
+                    saveToRealtimeDatabase();
+                    //test
                     updateUI(user);
                 }
                 else{
@@ -146,6 +150,26 @@ public class RegisterActivity extends AppCompatActivity {
             //move to the sign in screen for user to sign in
             Toast.makeText(RegisterActivity.this,"Successful!!! Please log in to continue.", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+        }
+    }
+
+    //test function
+    public void saveToRealtimeDatabase(){
+
+        FirebaseUser acc = FirebaseAuth.getInstance().getCurrentUser();
+        if (acc != null) {
+            User userData = new User();
+            userData.setUsername("");
+            userData.setPhone("0796728944");
+            userData.setEmail(acc.getEmail());
+            userData.setLocation("Thừa Thiên Huế");
+            FirebaseDatabase.getInstance().getReference("users")
+                    .child(acc.getUid()).setValue(userData);
+            Toast.makeText(RegisterActivity.this,"SUCCESS: User is NOT null!!",Toast.LENGTH_SHORT).show();
+
+        }
+        else{
+            Toast.makeText(RegisterActivity.this,"FAILED: User is null!!",Toast.LENGTH_SHORT).show();
         }
     }
 
