@@ -143,7 +143,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
         }
         if(v.getId() == R.id.btnAddLocation){
             // algorithm???
-//            startActivity(new Intent(EditAccountActivity.this,ChooseLocationActivity.class));
+            startActivity(new Intent(EditAccountActivity.this,ChooseLocationActivity.class));
         }
         if(v.getId() == R.id.btnSave){
             //update user photo

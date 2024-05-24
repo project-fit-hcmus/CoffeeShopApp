@@ -66,12 +66,12 @@ dependencies {
     // TODO: Add the dependencies for any other Firebase products you want to use
     // See https://firebase.google.com/docs/android/setup#available-libraries
     // For example, add the dependencies for Firebase Authentication and Cloud Firestore
-    implementation("com.google.firebase:firebase-core:10.2.0")
+    implementation("com.google.firebase:firebase-core:21.1.1")
     implementation("com.google.firebase:firebase-firestore")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha03")
     implementation ("androidx.credentials:credentials:1.2.2")
     implementation ("com.google.android.libraries.identity.googleid:googleid:latest.release")
-    implementation ("com.google.android.gms:play-services-auth:19.2.0")
+    implementation ("com.google.android.gms:play-services-auth:21.1.1")
 
     // tạo viền tròn bo góc cho hình ảnh đại diện
     implementation ("com.squareup.picasso:picasso:2.71828")
@@ -81,11 +81,15 @@ dependencies {
 
 //    //noinspection GradleCompatible
     implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation ("com.google.android.gms:play-services-location:17.0.0")
-    testImplementation ("junit:junit:4.12")
-    androidTestImplementation ("androidx.test.ext:junit:1.1.1")
+    implementation ("com.google.android.gms:play-services-location:21.2.0")
+    implementation ("com.google.android.gms:play-services-places:17.0.0")
+    implementation ("com.google.android.gms:play-services-vision:20.1.3")
+
+
+    testImplementation ("junit:junit:4.13.2")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
-    implementation ("com.google.firebase:firebase-storage:20.0.0")
+    implementation ("com.google.firebase:firebase-storage:21.0.0")
 
 
 

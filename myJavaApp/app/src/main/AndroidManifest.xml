@@ -27,9 +27,9 @@
             android:value="@string/facebook_client_token"/>
 
 <!--        set up for location picker -->
-<!--        <meta-data-->
-<!--            android:name="com.google.android.geo.API_KEY"-->
-<!--            android:value="@string/location_api"/>-->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/location_api"/>
 
 
         <activity android:name=".View.startedActivity" android:exported="true">
@@ -61,7 +61,7 @@
         <activity android:name=".View.ProfileActivity" android:exported="true"/>
         <activity android:name=".View.ProfileAction.EditAccountActivity" android:exported="true"/>
         <activity android:name=".View.ProfileAction.ChangePasswordActivity" android:exported="true"/>
-<!--        <activity android:name=".View.ProfileAction.ChooseLocationActivity" android:exported="true"/>-->
+        <activity android:name=".View.ProfileAction.ChooseLocationActivity" android:exported="true"/>
     </application>
 
 </manifest>

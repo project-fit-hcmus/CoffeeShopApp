@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.myjavaapp.Model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.ChildEventListener;
@@ -111,7 +112,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // kiểm tra xem email và password có rỗng không
                 if(txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()){
-                    Toast.makeText(LoginActivity.this,"Please enter Password and Email!!!",Toast.LENGTH_SHORT).show();
+                    Snackbar.make(btnLogin,"Please enter Pasword and Email!!!",Snackbar.LENGTH_SHORT).show();
+//                    Toast.makeText(LoginActivity.this,"Please enter Password and Email!!!",Toast.LENGTH_SHORT).show();
                 }
                 else{
                     //sign in
@@ -166,7 +168,8 @@ public class LoginActivity extends AppCompatActivity {
                 else{
                     //trường hợp thông tin đăng nhập không hợp lệ
                     Log.d(TAG,"FAILED: SingInWithEmailAndPassword");
-                    Toast.makeText(LoginActivity.this,"Email or Password may be wrong!!",Toast.LENGTH_SHORT).show();
+                    Snackbar.make(btnLogin,"Email or Password may be wrong!!!",Snackbar.LENGTH_SHORT).show();
+//                    Toast.makeText(LoginActivity.this,"Email or Password may be wrong!!",Toast.LENGTH_SHORT).show();
                     updateUI(null);
                 }
             }
