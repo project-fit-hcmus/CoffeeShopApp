@@ -10,6 +10,8 @@ public class User {
     private String email;
     private String phonenumber;
     private String location;
+    private double latitude;
+    private double longtitude;
     //default constructor
     public User(){
 
@@ -17,6 +19,8 @@ public class User {
         email = null;
         phonenumber = null;
         location = null;
+        latitude = 0f;
+        longtitude = 0f;
     }
 
     public String getPhoneNumber(){
@@ -31,4 +35,8 @@ public class User {
     public void setEmail(String mail){this.email = email;}
     public String getLocation(){return  this.location;}
     public void setLocation(String loc){ this.location = loc;}
+    public double getLongtitude(){ return longtitude;  }
+    public void setLongtitude(double input){this.longtitude = input;}
+    public double getLatitude(){return latitude;}
+    public void setLatitude(double input){this.latitude = input;}
 }

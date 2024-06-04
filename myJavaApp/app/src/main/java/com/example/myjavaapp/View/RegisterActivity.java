@@ -160,9 +160,11 @@ public class RegisterActivity extends AppCompatActivity {
         if (acc != null) {
             User userData = new User();
             userData.setUsername("");
-            userData.setPhone("0796728944");
+            userData.setPhone("");
             userData.setEmail(acc.getEmail());
-            userData.setLocation("Thừa Thiên Huế");
+            userData.setLocation("");
+            userData.setLongtitude(0f);
+            userData.setLatitude(0f);
             FirebaseDatabase.getInstance().getReference("users")
                     .child(acc.getUid()).setValue(userData);
             Toast.makeText(RegisterActivity.this,"SUCCESS: User is NOT null!!",Toast.LENGTH_SHORT).show();

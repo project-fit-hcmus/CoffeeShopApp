@@ -18,14 +18,14 @@ import com.google.android.gms.location.LocationRequest;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.text.TextPaint;
-import android.widget.TextView;
+import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -39,14 +39,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -55,134 +51,77 @@ import java.util.Locale;
 public class ChooseLocationActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, View.OnClickListener {
     //declaration of Google API Client
     private GoogleApiClient mGoogleApiClient;
-    private int PLACE_PICKER_REQUEST = 1;
     private int LOCATION_PERMISSION_REQUEST = 2;
-    private int FINE_PERMISSION_CODE = 3;
-    private FloatingActionButton fabPickPlace;
-    private TextView tvPlaceDetails;
-
-    //new
     private GoogleMap mMap;
-//    private SupportMapFragment mapFragment;
-    Location currentLocation = new Location("USA");
-    FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationManager locationManager;
+    private SupportMapFragment mapFragment;
 
     private LocationRequest mLocationRequest;
-
     private Location mLastLocation;
 
+
     private Marker mCurrLocationMarker;
+    private MarkerOptions markerOptions;
+    private AppCompatButton btnConfirm, btnCancel;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.choose_location_content_main);
-        //ON TEST
-//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-//        getLastLocation();
-        //ON TEST
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
+        btnConfirm = (AppCompatButton) findViewById(R.id.btnConfirmPosition);
+        btnCancel = (AppCompatButton) findViewById(R.id.btnCancelPosition);
+        btnConfirm.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
 
     }
-
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == LOCATION_PERMISSION_REQUEST) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(ChooseLocationActivity.this, "Location Permission granted!!!", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(ChooseLocationActivity.this, "Location Permission NOT granted!!!", Toast.LENGTH_SHORT).show();
-//
-//            }
-//        }
-        if(requestCode == FINE_PERMISSION_CODE){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(ChooseLocationActivity.this, "REQUEST permission!!!",Toast.LENGTH_SHORT).show();
-                getLastLocation();
-            }else{
-                Toast.makeText(ChooseLocationActivity.this,"Location Permission is denied!!!",Toast.LENGTH_SHORT).show();
+        if (requestCode == LOCATION_PERMISSION_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(ChooseLocationActivity.this, "Location Permission granted!!!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(ChooseLocationActivity.this, "Location Permission NOT granted!!!", Toast.LENGTH_SHORT).show();
+
             }
         }
     }
 
-    //ON TEST
-    private void getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},FINE_PERMISSION_CODE);
-            return;
-        }
-        Toast.makeText(ChooseLocationActivity.this,"On getLastLocation function!!!",Toast.LENGTH_SHORT).show();
-        Task<Location> task = fusedLocationProviderClient.getLastLocation();
-        Toast.makeText(ChooseLocationActivity.this,"On getLastLocation function 2!!!",Toast.LENGTH_SHORT).show();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if(location != null){
-                    currentLocation = location;
-                    Toast.makeText(ChooseLocationActivity.this, "GET current Location!!!",Toast.LENGTH_SHORT).show();
-                    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                            .findFragmentById(R.id.map_fragment);
-                    mapFragment.getMapAsync(ChooseLocationActivity.this);
-                }
-                else{
-                    Toast.makeText(ChooseLocationActivity.this,"Location is null",Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(ChooseLocationActivity.this,"on FAILED!!",Toast.LENGTH_SHORT).show();
-            }
-        }).addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if(task.isSuccessful()){
-                    if(task.getResult() != null){
-                        currentLocation = task.getResult();
-                        Toast.makeText(ChooseLocationActivity.this, "GET current Location!!!",Toast.LENGTH_SHORT).show();
-                        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                                .findFragmentById(R.id.map_fragment);
-                        mapFragment.getMapAsync(ChooseLocationActivity.this);
-                    }
-                    else{
-                        Toast.makeText(ChooseLocationActivity.this,"Location is null",Toast.LENGTH_SHORT).show();
 
-                    }
-                }
-                else{
-                    Toast.makeText(ChooseLocationActivity.this,"on Complete: NOT SUCCESSFUL",Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        }).addOnCanceledListener(new OnCanceledListener() {
-            @Override
-            public void onCanceled() {
-                Toast.makeText(ChooseLocationActivity.this,"CANCEL ACTION",Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},LOCATION_PERMISSION_REQUEST);
+        }
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-//        //ON TEST
-//        LatLng myLocation = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-//        mMap.addMarker(new MarkerOptions().position(myLocation).title("My location"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-//        //ON TEST
+
+        //create makerOptions at current location
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+
+        fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if(location != null){
+                    markerOptions = new MarkerOptions();
+                    markerOptions.position(new LatLng(location.getLatitude(),location.getLongitude()));
+                    mMap.addMarker(markerOptions);
+                }
+            }
+        });
+
 
         //initial Google Play service
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
@@ -194,6 +133,20 @@ public class ChooseLocationActivity extends AppCompatActivity implements OnMapRe
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
+
+        //set click action
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(@NonNull LatLng latLng) {
+                markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title(getCompleteAddress(latLng.latitude,latLng.longitude));
+                mMap.clear();
+                mMap.addMarker(markerOptions);
+
+            }
+        });
+
 
     }
 
@@ -234,7 +187,8 @@ public class ChooseLocationActivity extends AppCompatActivity implements OnMapRe
         }
         //showing current location marker on map
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
+        Toast.makeText(ChooseLocationActivity.this,"On location Changed",Toast.LENGTH_SHORT).show();
+        markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String provider = locationManager.getBestProvider(new Criteria(),true);
@@ -273,11 +227,50 @@ public class ChooseLocationActivity extends AppCompatActivity implements OnMapRe
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
 
+    public String getCompleteAddress(double latitude, double longitude){
+        String addr = "";
+        Geocoder geocoder = new Geocoder(this,Locale.getDefault());
+        try{
+            List<Address> addresses = geocoder.getFromLocation(latitude,longitude,1);
+            if(addresses != null){
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+                for(int i =0 ; i <= returnedAddress.getMaxAddressLineIndex(); ++i){
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                addr = strReturnedAddress.toString();
+                Log.w("My Current Location address",strReturnedAddress.toString());
+            }else{
+                Log.w("My Current Location Address","No address returned!");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.w("My Current Location address","Cannot get address!");
+        }
 
+        return  addr;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.btnConfirmPosition){
+            // to do something
+            Intent response = new Intent();
+            Bundle data = new Bundle();
+            LatLng position = markerOptions.getPosition();
+            data.putString("address",getCompleteAddress(position.latitude,position.longitude));
+            data.putDouble("latitude", position.latitude);
+            data.putDouble("longitude",position.longitude);
+            response.putExtra("data",data);
+            setResult(RESULT_OK, response);
+            finish();
+        }
+        if(v.getId() == R.id.btnCancelPosition){
+            Intent response = new Intent();
+            setResult(RESULT_CANCELED,response);
+            finish();
+        }
+    }
 }
 
-
-//references : https://github.com/androidmads/PlacePickerSample
-//references 2: https://medium.com/@abhinavv.singh/integrating-google-maps-in-android-studio-using-java-a-step-by-step-guide-with-code-5ba857dff344
-
-
+// lúc mở map lên không hiện vị trí hiện tại

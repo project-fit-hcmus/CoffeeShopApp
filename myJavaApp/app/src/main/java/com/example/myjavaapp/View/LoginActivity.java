@@ -148,7 +148,6 @@ public class LoginActivity extends AppCompatActivity {
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        //updateUI(account);
         if(account != null)
             Toast.makeText(LoginActivity.this,"Already login!!!",Toast.LENGTH_SHORT).show();
     }
@@ -254,9 +253,11 @@ public class LoginActivity extends AppCompatActivity {
         if (acc != null) {
             User userData = new User();
             userData.setUsername(acc.getDisplayName());
-            userData.setPhone("0796728944");
+            userData.setPhone("");
             userData.setEmail(acc.getEmail());
-            userData.setLocation("Thừa Thiên Huế");
+            userData.setLocation("");
+            userData.setLatitude(0f);
+            userData.setLongtitude(0f);
             // kiểm tra xem userId đã tồn tại trong realtime firebase hay chưa?
 
             if(!checkExistInRealtime(acc.getUid())){

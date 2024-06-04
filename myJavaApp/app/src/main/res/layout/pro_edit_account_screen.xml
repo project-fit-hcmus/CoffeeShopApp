@@ -103,7 +103,7 @@
         android:layout_margin="10dp"
         app:dividerColor="@color/light_gray"
         tools:ignore="MissingConstraints" />
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/groupEditLocation"
@@ -114,25 +114,33 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:drawableStart="@drawable/baseline_location_on_24"
             android:id="@+id/txtUserLocation"
-            android:text="Your location Location"
+            android:text="Your Location"
+            android:drawablePadding="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/btnAddLocation"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:textColor="@color/light_gray"
             android:textSize="15dp" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Replace Location"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/btnAddLocation"
             android:stateListAnimator="@animator/button_animation"
             android:textColor="@color/light_gray"
-            android:drawableStart="@drawable/baseline_location_on_24_red"
-            android:background="@drawable/choose_button"
-            android:layout_marginLeft="40dp"/>
+            android:drawableStart="@drawable/baseline_mode_edit_outline_24"
+            android:background="@color/transparent"
+            android:layout_marginLeft="40dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginRight="10dp"
+            tools:ignore="MissingConstraints" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="1dp"

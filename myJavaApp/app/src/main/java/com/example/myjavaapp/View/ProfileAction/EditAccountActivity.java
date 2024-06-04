@@ -63,6 +63,9 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
     private ImageView dropPinView;
     private int SELECT_PICTURE = 1122;
     private int REQUEST_CODE = 1133;
+    private int REQUEST_LOCATION = 1111;
+    private double latitude = 0f;
+    private double longitude = 0f;
     private Uri choosenPic = null;
     //get image from user device
     private ActivityResultLauncher<PickVisualMediaRequest> launcher = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), new ActivityResultCallback<Uri>() {
@@ -105,7 +108,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
                  String username = snapshot.child("username").getValue(String.class);
                  txtUsername.setHint(username);
                  txtPhoneNumber.setHint(phone);
-                 txtLocation.setHint(location);
+                 txtLocation.setText(location);
              }
 
              @Override
@@ -114,7 +117,6 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
              }
          });
 
-//        userImage.setImageURI(user.getPhotoUrl());
          Picasso.get().load(user.getPhotoUrl()).into(userImage);
 
         btnCancel.setOnClickListener(this);
@@ -142,8 +144,8 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
             getImageFromDevice();
         }
         if(v.getId() == R.id.btnAddLocation){
-            // algorithm???
-            startActivity(new Intent(EditAccountActivity.this,ChooseLocationActivity.class));
+
+            startActivityForResult(new Intent(EditAccountActivity.this,ChooseLocationActivity.class),REQUEST_LOCATION);
         }
         if(v.getId() == R.id.btnSave){
             //update user photo
@@ -167,7 +169,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
                     }
                 }
             });
-            //update phonenumber in realtime
+            //update phonenumber and address location in realtime
             //get reference to realtime databse
             if(!txtPhoneNumber.getText().toString().isEmpty()){
                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users");
@@ -181,6 +183,13 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
                             if(uInfo != null){
                                 uInfo.setPhone(txtPhoneNumber.getText().toString());
                                 uInfo.setUsername(txtUsername.getText().toString());
+                                if(latitude != 0f)
+                                    uInfo.setLatitude(latitude);
+                                if(longitude != 0f)
+                                    uInfo.setLongtitude(longitude);
+                                String addr = txtLocation.getText().toString();
+                                if(!addr.equals("Your Location"))
+                                    uInfo.setLocation(addr);
                             }
                             userRefId.setValue(uInfo);
                             Log.d("Realtime","Update phone successful!!!");
@@ -266,12 +275,28 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == REQUEST_CODE){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Toast.makeText(EditAccountActivity.this,"SUCCESS: Quyền được cấp thành công",Toast.LENGTH_SHORT).show();
+        if(requestCode == REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(EditAccountActivity.this, "SUCCESS: Quyền được cấp thành công", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(EditAccountActivity.this, "ERROR: Quyền không được cấp", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_LOCATION){
+            if(resultCode == RESULT_OK){
+                Bundle received = data.getBundleExtra("data");
+                String address = received.getString("address");
+                latitude = received.getDouble("latitude");
+                longitude = received.getDouble("longitude");
+                txtLocation.setText(address);
             }
             else{
-                Toast.makeText(EditAccountActivity.this,"ERROR: Quyền không được cấp",Toast.LENGTH_SHORT).show();
+                //to do nothing
             }
         }
     }
