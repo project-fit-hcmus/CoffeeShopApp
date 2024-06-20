@@ -1,52 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent">
 
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <TextView
+<!--    header-->
+    <LinearLayout
+        android:id="@+id/homeHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black"
-        android:id="@+id/title"
-        android:text="Welcome to Coffee shop"
-        android:textColor="@color/white"
-        android:gravity="center"
-        android:textSize="30dp"
-        tools:ignore="MissingConstraints" />
-    <TextView
+        android:background="@drawable/background_top_area"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/headerForHome"
+            layout="@layout/header"
+            />
+
+        <TextView
+            android:id="@+id/greetingHome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Good Morning userame,"
+            android:textColor="@color/white"
+            android:textSize="22dp"
+            android:textStyle="italic|bold" />
+
+        <TextView
+            android:id="@+id/subGrettinghome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="Order a cup of coffee now its getting cold ... "
+            android:textColor="@color/white" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:id="@+id/searchBoxHome"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/box_border"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Search..."
+                android:textSize="15dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textStyle="normal"
+                android:id="@+id/keywordSearchHome"
+                app:layout_constraintLeft_toLeftOf="parent"
+                tools:ignore="MissingConstraints" />
+            <Button
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:background="@color/box_color"
+                app:layout_constraintRight_toRightOf="parent"
+                android:drawableEnd="@drawable/places_ic_search"
+                tools:ignore="MissingConstraints" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+
+<!--    body-->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtMail"
-        android:textSize="20dp"
-        android:hint="This is email"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/title"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtName"
-        android:textSize="20dp"
-        android:hint="this is name"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/txtMail"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtIdToken"
-        android:textSize="20dp"
-        android:hint="this is id token"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/txtName"
-        tools:ignore="MissingConstraints" />
+        android:layout_height="0dp"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintTop_toBottomOf="@+id/homeHeader"
+        app:layout_constraintBottom_toTopOf="@+id/homeBottomNav"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/contentHome"
+            android:background="@color/white"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/titCategoryHome"
+                android:text="Categories"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_margin="10dp"
+                />
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="200dp"
+                android:layout_height="1dp"
+                android:id="@+id/homeSubDivider"
+                app:layout_constraintTop_toBottomOf="@+id/homeSubTitle"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="10dp"
+                android:background="@color/main_color"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/recyclerCategory"/>
+            <include
+                layout="@layout/home_sub_screen"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/homeBottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/homeBottomNav"
-        app:menu="@menu/bottom_navigation_layout"/>
+        app:menu="@menu/bottom_navigation_layout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

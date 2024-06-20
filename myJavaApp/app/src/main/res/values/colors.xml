@@ -13,8 +13,11 @@
     <color name="green">#00FF00</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="red">#FF0000</color>
+    <color name="box_color">#DFCCAF</color>
 
     <color name="colorPrimary">#fd1e01</color>
     <color name="colorPrimaryDark">#f51e02</color>
     <color name="colorAccent">#fff203</color>
+    <color name="silver">#CFCFCF</color>
+    <color name="yellow">#FFD700</color>
 </resources>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="170dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/home_sub_item_border"
+    android:layout_margin="15dp"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/itemBeverageImg"
+        android:layout_width="match_parent"
+        android:background="@drawable/image_sub_border"
+        android:src="@drawable/loading"
+        android:layout_height="170dp"/>
+    <TextView
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:textSize="13dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/itemBeverageName"
+        android:text="OAT milk and Ice Coffee"
+        android:textColor="@color/black"
+        />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/itemGroupPrice"
+        android:layout_marginLeft="5dp"
+
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/yellow"
+            android:text="20$"
+            android:textStyle="bold"
+            android:id="@+id/itemBeverageCost"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="MissingConstraints" />
+        <ImageButton
+            tools:ignore="MissingConstraints"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/itemBtnAdd"
+            android:src="@drawable/baseline_add_24"
+            android:background="@drawable/add_icon_border"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</LinearLayout>
