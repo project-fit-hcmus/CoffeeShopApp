@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myjavaapp.R;
-import com.example.myjavaapp.View.homeActivity;
+//import com.example.myjavaapp.View.homeActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -102,7 +102,7 @@ public class facebookActivity extends AppCompatActivity {
 
     public void updateUI(FirebaseUser user){
         if(user != null){
-            startActivity(new Intent(facebookActivity.this, homeActivity.class));
+//            startActivity(new Intent(facebookActivity.this, homeActivity.class));
         }
     }
 

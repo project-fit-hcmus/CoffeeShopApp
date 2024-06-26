@@ -304,12 +304,6 @@
     </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/ProfileBottomNav"
-        app:menu="@menu/bottom_navigation_layout"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

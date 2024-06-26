@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.example.myjavaapp.R;
-import com.example.myjavaapp.View.ProfileActivity;
+//import com.example.myjavaapp.View.ProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -92,7 +92,9 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.btnBack){
-            startActivity(new Intent(ChangePasswordActivity.this, ProfileActivity.class));
+//            startActivity(new Intent(ChangePasswordActivity.this, ProfileActivity.class));
+            setResult(RESULT_OK);
+            finish();
 
         }
         if(v.getId() == R.id.btnSave){

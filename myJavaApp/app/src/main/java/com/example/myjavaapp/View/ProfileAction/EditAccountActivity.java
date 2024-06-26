@@ -23,9 +23,9 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.myjavaapp.View.Model.User;
+import com.example.myjavaapp.Model.User;
 import com.example.myjavaapp.R;
-import com.example.myjavaapp.View.ProfileActivity;
+//import com.example.myjavaapp.View.ProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -117,10 +117,6 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
         btnChoosePhoto.setOnClickListener(this);
         btnBack.setOnClickListener(this);
 
-
-
-
-
     }
 
     @Override
@@ -201,7 +197,8 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
 
 
             //trường hợp sau khi save thoát ra màn hình chính thì không cập nhập thông tin tức thời được
-//            startActivity(new Intent(EditAccountActivity.this, ProfileActivity.class));
+            setResult(RESULT_OK);
+            finish();
 
         }
         if(v.getId() == R.id.btnCancel){
@@ -212,11 +209,13 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
             else txtPhoneNumber.setText("Your phone number");
 
             Picasso.get().load(user.getPhotoUrl()).into(userImage);
-//            startActivity(new Intent(EditAccountActivity.this, ProfileActivity.class));
+            setResult(RESULT_OK);
+            finish();
 
         }
         if(v.getId() == R.id.btnBack){
-            startActivity(new Intent(EditAccountActivity.this, ProfileActivity.class));
+            setResult(RESULT_OK);
+            finish();
         }
     }
 

@@ -8,9 +8,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class TypeViewModel extends ViewModel {
+public class CartDetailViewModel extends ViewModel {
+
     private static final DatabaseReference HOT_STOCK_REF =
-            FirebaseDatabase.getInstance().getReference("/types");
+            FirebaseDatabase.getInstance().getReference("/cartdetails");
     private final FirebaseQueryLiveData liveData = new FirebaseQueryLiveData(HOT_STOCK_REF);
 
     @NonNull
