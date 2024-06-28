@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/color_1_fifth"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--    android:background="@color/white"-->
 
     <LinearLayout
         android:id="@+id/headerProfile"
@@ -55,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@+id/headerProfile"
-        app:layout_constraintBottom_toTopOf="@+id/ProfileBottomNav"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHeight_default="wrap"
@@ -65,9 +66,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/profileContent"
         tools:ignore="MissingConstraints"
-        android:background="@color/white"
         android:orientation="vertical"
-
+        android:background="@color/color_1_fifth"
+        android:layout_marginBottom="60dp"
         >
 
         <TextView
@@ -139,7 +140,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@color/white"
+                android:background="@color/color_1_fifth"
                 android:id="@+id/btnEditAccount"
                 android:layout_marginTop="-5dp"
                 android:stateListAnimator="@animator/button_animation"
@@ -172,7 +173,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@color/white"
+                android:background="@color/color_1_fifth"
                 android:id="@+id/btnPayment"
                 android:layout_marginTop="-5dp"
                 android:stateListAnimator="@animator/button_animation"
@@ -206,7 +207,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@color/white"
+                android:background="@color/color_1_fifth"
                 android:id="@+id/btnPassword"
                 android:layout_marginTop="-5dp"
                 android:stateListAnimator="@animator/button_animation"
@@ -239,7 +240,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@color/white"
+                android:background="@color/color_1_fifth"
                 android:id="@+id/btnOrder"
                 android:layout_marginTop="-5dp"
                 android:stateListAnimator="@animator/button_animation"
@@ -272,7 +273,7 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@color/white"
+                android:background="@color/color_1_fifth"
                 android:id="@+id/btnPolicy"
                 android:layout_marginTop="-5dp"
                 android:stateListAnimator="@animator/button_animation"
@@ -289,18 +290,20 @@
             />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnLogout"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:text="Logout"
-            android:id="@+id/btnLogout"
-            android:background="@drawable/botron_button"
-            android:textColor="@color/white"
-            tools:ignore="MissingConstraints"
             android:layout_gravity="center"
-            app:layout_constraintTop_toBottomOf="@+id/profileContent"
-            android:stateListAnimator="@animator/button_animation"
+            android:layout_marginTop="60dp"
             android:layout_marginBottom="20dp"
-            android:layout_marginTop="60dp"/>
+            android:background="@drawable/botron_button"
+            android:stateListAnimator="@animator/button_animation"
+            android:text="Logout"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profileContent"
+            tools:ignore="MissingConstraints" />
     </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

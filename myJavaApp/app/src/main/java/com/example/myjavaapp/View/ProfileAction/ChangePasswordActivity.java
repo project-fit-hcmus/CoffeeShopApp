@@ -33,7 +33,7 @@ import java.util.List;
 public class ChangePasswordActivity extends AppCompatActivity implements View.OnClickListener {
     private TextInputEditText edtOldPass, edtNewPass, edtRepeat;
     private AppCompatButton btnSave, btnCancel, btnBack;
-    private TextView txtNotification;
+    private TextView txtNotification, txtTitle;
     private FirebaseUser user;
     private TextInputLayout repeatLayout;
     @Override
@@ -49,8 +49,11 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         btnBack = (AppCompatButton) findViewById(R.id.btnBack);
         txtNotification = (TextView) findViewById(R.id.txtNoti);
         repeatLayout = (TextInputLayout) findViewById(R.id.newPasswordRepeat);
+        txtTitle = (TextView) findViewById(R.id.HeadTitle);
         user = FirebaseAuth.getInstance().getCurrentUser();
         btnBack.setOnClickListener(this);
+
+        txtTitle.setText("Manage Password");
 
         // kiểm tra và vô hiệu hóa nếu người dùng đăng nhập bằng Google hay Facebook
         String provideId  = null;

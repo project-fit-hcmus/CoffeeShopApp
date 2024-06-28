@@ -1,16 +1,25 @@
 package com.example.myjavaapp.Model.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 
-@Entity(tableName = "Favorite", primaryKeys = {"favorite_user","favorite_beverage"})
+@Entity(tableName = "Favorite", primaryKeys = {"favoriteUser","favoriteBeverage"})
 public class Favorite {
-    @ColumnInfo(name = "favorite_user")
-    private Integer favorite_user;
-    @ColumnInfo(name = "favorite_beverage")
-    private Integer favorite_beverage;
-    public Integer getFavoriteUser(){return this.favorite_user;}
-    public Integer getFavoriteBeverate(){return this.favorite_beverage;}
-    public void setFavoriteUser(Integer user){this.favorite_user = user;}
-    public void setFavoriteBeverage(Integer beverage){this.favorite_beverage = beverage;}
+    @ColumnInfo(name = "favoriteUser")
+    @NonNull
+    private String favoriteUser;
+    @NonNull
+    @ColumnInfo(name = "favoriteBeverage")
+    private String favoriteBeverage;
+    public String getFavoriteUser(){return this.favoriteUser;}
+    public String getFavoriteBeverage(){return this.favoriteBeverage;}
+    public void setFavoriteUser(String user){this.favoriteUser = user;}
+    public void setFavoriteBeverage(String beverage){this.favoriteBeverage = beverage;}
+
+    public Favorite(){}
+    public Favorite(String user, String beverage){
+        this.favoriteUser = user;
+        this.favoriteBeverage = beverage;
+    }
 }

@@ -1,6 +1,8 @@
 package com.example.myjavaapp.Model.database;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
@@ -8,17 +10,21 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
+import com.example.myjavaapp.Model.LocalViewModel.LocalFavoriteViewModel;
 import com.example.myjavaapp.Model.dao.BeverageDAO;
 import com.example.myjavaapp.Model.dao.CartDAO;
 import com.example.myjavaapp.Model.dao.CartDetailDAO;
+import com.example.myjavaapp.Model.dao.FavoriteDAO;
 import com.example.myjavaapp.Model.dao.TypeDAO;
 import com.example.myjavaapp.Model.entity.Beverage;
 import com.example.myjavaapp.Model.entity.Cart;
 import com.example.myjavaapp.Model.entity.CartDetail;
+import com.example.myjavaapp.Model.entity.Favorite;
 import com.example.myjavaapp.Model.entity.Type;
 import com.example.myjavaapp.ViewModel.BeverageViewModel;
 import com.example.myjavaapp.ViewModel.CartDetailViewModel;
 import com.example.myjavaapp.ViewModel.CartViewModel;
+import com.example.myjavaapp.ViewModel.FavoriteViewModel;
 import com.example.myjavaapp.ViewModel.TypeViewModel;
 import com.google.firebase.database.DataSnapshot;
 
@@ -118,12 +124,38 @@ public class HandleDataToRoom {
             public void onChanged(DataSnapshot dataSnapshot) {
                 if(dataSnapshot != null){
                     for(DataSnapshot i : dataSnapshot.getChildren()){
+//                        if(i.child("cartUser").equals(id))
                             temp.add(new Cart(i.child("cartId").getValue(String.class), i.child("cartUser").getValue(String.class)));
                     }
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             cartDAO.insertAllCart(temp);
+                        }
+                    }).start();
+                }
+            }
+        });
+    }
+
+    public void getAllFavoriteItems(String id){
+        FavoriteViewModel favoriteViewModel = new ViewModelProvider((ViewModelStoreOwner) mainCtx).get(FavoriteViewModel.class);
+        LiveData<DataSnapshot> liveData = favoriteViewModel.getDataSnapshotLiveData();
+        List<Favorite> temp = new ArrayList<>();
+        FavoriteDAO favoriteDAO = AppDatabase.getDatabase(mainCtx).favoriteDAO();
+        liveData.observe((LifecycleOwner) mainCtx, new Observer<DataSnapshot>() {
+            @Override
+            public void onChanged(DataSnapshot dataSnapshot) {
+                if(dataSnapshot != null){
+                    for(DataSnapshot i : dataSnapshot.getChildren()){
+                        if(i.child("favoriteUser").getValue(String.class).contains(id))
+                            temp.add(new Favorite(i.child("favoriteUser").getValue(String.class), i.child("favoriteBeverage").getValue(String.class)));
+                        Log.d("AFTER READ FAVORITE", String.valueOf(temp.size()));
+                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            favoriteDAO.insertAllFavoriteItems(temp);
                         }
                     }).start();
                 }

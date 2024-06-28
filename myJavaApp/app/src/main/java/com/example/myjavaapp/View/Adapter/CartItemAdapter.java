@@ -77,17 +77,17 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
         holder.quantity.setText(item.cartDetail.getCartDetailQuantity().toString());
 
         holder.btnAdd.setOnClickListener(v -> {
-            itemClickListener.onCartItemClick(position,item.cartDetail.getCartDetailId(),item.cartDetail.getCartDetailBeverage(),item.cartDetail.getCartDetailQuantity() + 1);
+            itemClickListener.onCartItemClick(position,item.cartDetail.getCartDetailId(),item.cartDetail.getCartDetailBeverage(),item.cartDetail.getCartDetailQuantity() + 1,item);
         });
         holder.btnSub.setOnClickListener(v -> {
-            itemClickListener.onCartItemClick(position,item.cartDetail.getCartDetailId(),item.cartDetail.getCartDetailBeverage(),item.cartDetail.getCartDetailQuantity() - 1);
+            itemClickListener.onCartItemClick(position,item.cartDetail.getCartDetailId(),item.cartDetail.getCartDetailBeverage(),item.cartDetail.getCartDetailQuantity() - 1,item);
         });
 
         holder.checkbox.setOnClickListener(v -> {
             if(holder.checkbox.isChecked())
-                itemClickListener.onCartItemClick(position,"plus",item.beverage.getBeverageCost(),item.cartDetail.getCartDetailQuantity());
+                itemClickListener.onCartItemClick(position,"plus",item.beverage.getBeverageCost(),item.cartDetail.getCartDetailQuantity(),item);
             else
-                itemClickListener.onCartItemClick(position,"subs",item.beverage.getBeverageCost(),item.cartDetail.getCartDetailQuantity());
+                itemClickListener.onCartItemClick(position,"subs",item.beverage.getBeverageCost(),item.cartDetail.getCartDetailQuantity(),item);
         });
 
     }
@@ -98,8 +98,8 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
     }
 
     @Override
-    public void onCartItemClick(Integer position, String id, String beverage,Integer number) {
-        this.itemClickListener.onCartItemClick(position,id,beverage,number);
+    public void onCartItemClick(Integer position, String id, String beverage,Integer number, BeverageAndCartDetail item) {
+        this.itemClickListener.onCartItemClick(position,id,beverage,number, item);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

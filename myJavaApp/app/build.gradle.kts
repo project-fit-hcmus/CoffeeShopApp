@@ -109,6 +109,10 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-guava:2.6.1")
 
+    //setup using viewmodel
+//    implementation("android.arch.lifecycle:extensions:1.0.0")
+//    annotationProcessor("android.arch.lifecycle:compiler:1.0.0")
+
 
 
 

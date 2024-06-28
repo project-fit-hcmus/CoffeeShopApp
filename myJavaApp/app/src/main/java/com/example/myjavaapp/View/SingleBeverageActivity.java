@@ -1,8 +1,10 @@
 package com.example.myjavaapp.View;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -16,22 +18,54 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.example.myjavaapp.Model.LocalViewModel.LocalBeverageViewModel;
+import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
+import com.example.myjavaapp.Model.LocalViewModel.LocalCartViewModel;
+import com.example.myjavaapp.Model.LocalViewModel.LocalFavoriteViewModel;
 import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.entity.Beverage;
+import com.example.myjavaapp.Model.entity.CartDetail;
+import com.example.myjavaapp.Model.entity.Favorite;
 import com.example.myjavaapp.R;
+import com.google.android.gms.common.data.DataBufferObserver;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.util.Executors;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
+import java.util.Observable;
+import java.util.concurrent.ExecutorService;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import kotlinx.coroutines.CoroutineScope;
+import kotlinx.coroutines.Dispatchers;
 
 public class SingleBeverageActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView beverageIcon;
     private ImageButton btnBack, btnFavorite, btnAdd, btnSub;
     private Button btnAddToCart;
     private TextView txtRating, txtPrice, txtDescription, txtName, txtQuantity;
+    private CircleImageView userAvatar;
+
+    private String beverageId;
+    private FirebaseUser user;
+    private LocalFavoriteViewModel favoriteViewModel;
+    private LocalCartViewModel cartViewModel;
+    private LocalBeverageViewModel beverageViewModel;
+    private LocalCartDetailViewModel cartDetailViewModel;
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,13 +83,26 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
         txtDescription = findViewById(R.id.beverageDescp);
         txtName = findViewById(R.id.txtBeverageName);
         txtQuantity = findViewById(R.id.quantityResult);
+        userAvatar = findViewById(R.id.userImg);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        beverageViewModel = new ViewModelProvider(this).get(LocalBeverageViewModel.class);
+        favoriteViewModel = new ViewModelProvider(this).get(LocalFavoriteViewModel.class);
+        cartViewModel = new ViewModelProvider(this).get(LocalCartViewModel.class);
+        cartDetailViewModel = new ViewModelProvider(this).get(LocalCartDetailViewModel.class);
+
 
         Intent intent = getIntent();
         Bundle data = intent.getExtras();
-        String beverageId = data.getString("beverageId");
+        beverageId = data.getString("beverageId");
+
+        Uri photo = user.getPhotoUrl();
+        if(photo != null){
+            Picasso.get().load(photo).into(userAvatar);
+        }
         // get a beverage from Id
-        LiveData<Beverage> beverageLive = AppDatabase.getDatabase(this).beverageDAO().getBeverageFromId(beverageId);
-        Observer<Beverage> beverageObserver = new Observer<Beverage>() {
+
+        beverageViewModel.getBeverageFromId(beverageId).observe(this, new Observer<Beverage>() {
             @Override
             public void onChanged(Beverage beverage) {
                 if(beverage == null)
@@ -85,11 +132,26 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
                 txtRating.setText(String.valueOf(beverage.getBeverageRating()));
                 txtQuantity.setText("0");
                 txtDescription.setText(beverage.getBeverageDescription());
-
-
             }
-        };
-        beverageLive.observe(this,beverageObserver);
+        });
+
+        btnFavorite.setImageResource(R.drawable.baseline_favorite_border_24);
+        btnFavorite.setTag("unfavorite");
+
+        favoriteViewModel.getAllFavorites().observe(this, new Observer<List<Favorite>>() {
+            @Override
+            public void onChanged(List<Favorite> favorites) {
+                if(favorites != null && favorites.isEmpty())
+                    return;
+                for(Favorite i : favorites){
+                    if(i.getFavoriteBeverage().equals(beverageId)){
+                        btnFavorite.setImageResource(R.drawable.baseline_favorite_24);
+                        btnFavorite.setTag("favorite");
+                        return;
+                    }
+                }
+            }
+        });
 
 
         btnBack.setOnClickListener(this);
@@ -114,10 +176,49 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
 
         }
         if(v.getId() == R.id.btnAddToCart){
-            //code here
+            // add to realtime database
+            if(txtQuantity.getText().toString().equals("0")){
+                Toast.makeText(SingleBeverageActivity.this,"Please choose number of beverage to Order!!!",Toast.LENGTH_SHORT).show();
+            }else {
+                SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs",MODE_PRIVATE);
+                String cartId = sharedPreferences.getString("CartUserId","");
+                Toast.makeText(SingleBeverageActivity.this,cartId,Toast.LENGTH_SHORT).show();
+
+                cartDetailViewModel.checkIfBeverageIsExist(beverageId, cartId).observe(SingleBeverageActivity.this, new Observer<Integer>() {
+                    @Override
+                    public void onChanged(Integer integer) {
+                        if(integer == null){
+                            //add new
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
+                            ref.child(cartId + beverageId).setValue(new CartDetail(cartId,beverageId,Integer.parseInt(txtQuantity.getText().toString())));
+                        }
+                        else{
+                            //update
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
+                            ref.child(cartId + beverageId).child("cartDetailQuantity").setValue(integer + Integer.parseInt(txtQuantity.getText().toString()));
+                        }
+                    }
+                });
+            }
+
         }
         if(v.getId() == R.id.btnFavorite){
-            btnFavorite.setImageResource(R.drawable.baseline_favorite_24);
+            if(btnFavorite.getTag().equals("favorite")){
+                btnFavorite.setImageResource(R.drawable.baseline_favorite_border_24);
+                Toast.makeText(SingleBeverageActivity.this,"Remove from favorite",Toast.LENGTH_SHORT).show();
+                //xóa trên local (ERROR: đã xóa nhưng sau khi trở về mainFragment thì bị khôi phục lại)
+                favoriteViewModel.deleteFavoriteById(beverageId);
+//                favoriteViewModel.delete(beverageId);
+//                //xóa trên realtime
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("favorites");
+                ref.child(beverageId).removeValue();
+            }else{
+                Toast.makeText(SingleBeverageActivity.this,"Add to favorite",Toast.LENGTH_SHORT).show();
+
+                btnFavorite.setImageResource(R.drawable.baseline_favorite_24);
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("favorites");
+                ref.child(beverageId).setValue(new Favorite(user.getUid(),beverageId));
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.example.myjavaapp.View;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,10 +20,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.myjavaapp.Model.LocalViewModel.LocalBeverageViewModel;
+import com.example.myjavaapp.Model.LocalViewModel.LocalCateViewModel;
 import com.example.myjavaapp.Model.dao.TypeDAO;
 import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.entity.Beverage;
@@ -52,11 +58,9 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
     private ImageButton btnSearch;
     private CircleImageView userAvatar;
     private RecyclerView category, lstBeverages;
-    private LiveData<List<Beverage>> allBeverages;
-    private Observer<List<Beverage>> beverageObserve;
-    private LiveData<List<Type>> allTypes;
-    private Observer<List<Type>> typesObserve;
     private ArrayList<Type> listType;
+    private LocalCateViewModel cateViewModel;
+    private LocalBeverageViewModel beverageViewModel;
 
 
 
@@ -75,6 +79,9 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
 
         //get user data
         user = FirebaseAuth.getInstance().getCurrentUser();
+        beverageViewModel = new ViewModelProvider(this).get(LocalBeverageViewModel.class);
+        cateViewModel = new ViewModelProvider(this).get(LocalCateViewModel.class);
+
 
         Uri photo = user.getPhotoUrl();
         if(photo != null){
@@ -85,8 +92,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
         gretting += " " + user.getDisplayName() + ",";
         txtGreeting.setText(gretting);
 
-        allTypes = AppDatabase.getDatabase(getContext()).typeDAO().getAllType();
-        typesObserve = new Observer<List<Type>>() {
+        cateViewModel.getAllTypes().observe((LifecycleOwner) getContext(), new Observer<List<Type>>() {
             @Override
             public void onChanged(List<Type> types) {
                 if(types != null && types.isEmpty())
@@ -97,12 +103,11 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
                 category.setAdapter(adapter);
                 category.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL,false));
             }
-        };
-        allTypes.observe((LifecycleOwner) getContext(),typesObserve);
+        });
 
         //get hot beverage
-        allBeverages = AppDatabase.getDatabase(getContext()).beverageDAO().getBestSellerBeverage();
-        beverageObserve = new Observer<List<Beverage>>() {
+
+        beverageViewModel.getListBestSeller().observe(getViewLifecycleOwner(), new Observer<List<Beverage>>() {
             @Override
             public void onChanged(List<Beverage> beverages) {
                 if(beverages != null && beverages.isEmpty())
@@ -111,10 +116,9 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
                 adapter.setItemClickListener(HomeFragment.this);
                 lstBeverages.setAdapter(adapter);
                 lstBeverages.setLayoutManager(new GridLayoutManager(getContext(),2));
-
             }
-        };
-        allBeverages.observe((LifecycleOwner) getContext(),beverageObserve);
+        });
+
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,6 +227,26 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
             data.putString("beverageId",id);
             intent.putExtras(data);
             startActivityForResult(intent, 112233);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Glide.with(this).pauseRequests();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK)
+        if(requestCode == 112233){
+            Toast.makeText(getContext(),"112233",Toast.LENGTH_SHORT).show();
+
+        }
+        if(requestCode == 111111){
+            Toast.makeText(getContext(),"111111",Toast.LENGTH_SHORT).show();
+
         }
     }
 }

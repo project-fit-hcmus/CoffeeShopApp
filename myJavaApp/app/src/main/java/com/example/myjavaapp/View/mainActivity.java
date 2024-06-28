@@ -11,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.myjavaapp.Model.LocalViewModel.LocalCartViewModel;
 import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.database.HandleDataToRoom;
 import com.example.myjavaapp.Model.entity.Cart;
@@ -30,16 +32,12 @@ import java.util.List;
 
 public class mainActivity extends AppCompatActivity {
 
-    private GoogleSignInClient gClient;
-    private GoogleSignInOptions gOptions;
     private FirebaseUser user;
     private BottomNavigationView bottomNavigationView;
     private ViewPager viewPager;
-    private LiveData<String> liveData;
-    private Observer<String> observer;
-    private String cart;
 
     private HandleDataToRoom handleDataToRoom = new HandleDataToRoom(this);
+    private LocalCartViewModel cartViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
@@ -52,6 +50,9 @@ public class mainActivity extends AppCompatActivity {
         handleDataToRoom.getAllBeverage();
         handleDataToRoom.getAllCart();
         handleDataToRoom.getAllCartDetail();
+        handleDataToRoom.getAllFavoriteItems(user.getUid());
+
+        cartViewModel = new ViewModelProvider(this).get(LocalCartViewModel.class);
 
 
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNav);
@@ -82,7 +83,18 @@ public class mainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("isLogin",true);
+        editor.putString("UserId",user.getUid());
+//        editor.putUri("UserAvatar",user.getPhotoUrl());
         editor.apply();
+
+        cartViewModel.getCartIdFromUser(user.getUid()).observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                editor.putString("CartUserId",s);
+                editor.apply();
+            }
+        });
+
     }
 
     public void setupViewPager(){

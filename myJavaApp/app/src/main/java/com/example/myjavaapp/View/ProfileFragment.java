@@ -40,7 +40,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private AppCompatButton btnLogout;
     private AppCompatButton btnManageAcc, btnPayment, btnManagePass, btnMyOrder, btnPolicy;
     private TextView userPhoneNumber, userLocation;
-    private BottomNavigationView bottomNavigationView;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -125,7 +124,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             //quản lý phương thức thanh toán
         }
         if(v.getId() == R.id.btnPolicy){
-            //xem thông tin về chính sách của ứng dụng
+            startActivityForResult(new Intent(getContext(),PrivacyActivity.class), 11115);
         }
     }
 }

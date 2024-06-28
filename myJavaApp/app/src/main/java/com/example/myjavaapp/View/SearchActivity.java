@@ -1,6 +1,7 @@
 package com.example.myjavaapp.View;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,9 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myjavaapp.Model.LocalViewModel.LocalBeverageViewModel;
+import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
 import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.entity.Beverage;
 import com.example.myjavaapp.Model.entity.CartDetail;
@@ -30,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
+import java.util.prefs.Preferences;
 
 public class SearchActivity extends AppCompatActivity implements BeverageItemClickListener {
     private EditText edtSearch;
@@ -39,6 +44,8 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
     private ImageView imgReturn;
     private String keyword;
     private FirebaseUser user;
+    private LocalBeverageViewModel beverageViewModel;
+    private LocalCartDetailViewModel cartDetailViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +58,8 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
         recyclerView = findViewById(R.id.findRecyclerview);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+        beverageViewModel = new ViewModelProvider(this).get(LocalBeverageViewModel.class);
+        cartDetailViewModel = new ViewModelProvider(this).get(LocalCartDetailViewModel.class);
 
         Intent intent = getIntent();
         Bundle data = intent.getExtras();
@@ -61,8 +70,7 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
         Toast.makeText(this,factor,Toast.LENGTH_SHORT);
         Log.d("FACTOR",factor);
 
-        LiveData<List<Beverage>> beverageLive = AppDatabase.getDatabase(this).beverageDAO().findBeverageWithKeyword(factor);
-        Observer<List<Beverage>> beverageObserver = new Observer<List<Beverage>>() {
+        beverageViewModel.findBeverageWithKeyword(factor).observe(this, new Observer<List<Beverage>>() {
             @Override
             public void onChanged(List<Beverage> beverages) {
                 if(beverages != null && beverages.isEmpty()) {
@@ -73,10 +81,9 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
                 adapter.setItemClickListener(SearchActivity.this);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new GridLayoutManager(SearchActivity.this,2));
-
             }
-        };
-        beverageLive.observe(SearchActivity.this, beverageObserver);
+        });
+
 
         imgReturn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,9 +103,8 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
                     String key = edtSearch.getText().toString();
                     txtKeyword.setText("Kết quả tìm kiếm: " + key);
                     String factor = "%" + key + "%";
-                    beverageLive.removeObserver(beverageObserver);
-                    LiveData<List<Beverage>> beverageInsideLive = AppDatabase.getDatabase(SearchActivity.this).beverageDAO().findBeverageWithKeyword(factor);
-                    Observer<List<Beverage>> beverageInsideObserver = new Observer<List<Beverage>>() {
+
+                    beverageViewModel.findBeverageWithKeyword(factor).observe(SearchActivity.this, new Observer<List<Beverage>>() {
                         @Override
                         public void onChanged(List<Beverage> beverages) {
                             if(beverages != null && beverages.isEmpty()) {
@@ -109,10 +115,8 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
                             adapter.setItemClickListener(SearchActivity.this);
                             recyclerView.setAdapter(adapter);
                             recyclerView.setLayoutManager(new GridLayoutManager(SearchActivity.this,2));
-
                         }
-                    };
-                    beverageInsideLive.observe(SearchActivity.this, beverageInsideObserver);
+                    });
                 }
             }
         });
@@ -128,52 +132,27 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
             Toast.makeText(this,"Added",Toast.LENGTH_SHORT).show();
             String Uid = user.getUid();
             Log.d("USER ID",Uid);
-            LiveData<String> cartIdLive = AppDatabase.getDatabase(this).cartDAO().getCartIdFromUser(Uid);
-            Observer<String> cartIdObserver = new Observer<String>() {
-                @Override
-                public void onChanged(String s) {
-                    Log.d("cart id",s);
-                    Log.d("beverage id",id);
-                    if (s != null && s.isEmpty())
-                        return;
-                    LiveData<Boolean> isExistsLive = AppDatabase.getDatabase(SearchActivity.this).cartDetailDAO().isExistBeverage(id, s);
-                    Observer<Boolean> isExistObserver = new Observer<Boolean>() {
-                        @Override
-                        public void onChanged(Boolean aBoolean) {
-                            if(aBoolean == false){
-                                Log.d("RESULT CHECK", "false");
-                                //thêm mới cho cartdetail
-                                CartDetail cartItem = new CartDetail(s,id,1);
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
-                                ref.child(s + id).setValue(cartItem);
-                                isExistsLive.removeObserver(this);
-                            }else if(aBoolean == true){
-                                Log.d("RESULT CHECK", "true");
-                                //update trong cardetail
-                                LiveData<Integer> quantityLive = AppDatabase.getDatabase(SearchActivity.this).cartDetailDAO().getQuantityOfCartDetail(s, id);
-                                Observer<Integer> quantityObserver = new Observer<Integer>() {
-                                    @Override
-                                    public void onChanged(Integer integer) {
-                                        Log.d("VALUE", String.valueOf(integer));
-                                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
-                                        String child = s + id;
-                                        ref.child(child).child("cartDetailQuantity").setValue(integer + 1);
-                                        quantityLive.removeObserver(this);
-                                    }
-                                };
-                                quantityLive.observe(SearchActivity.this,quantityObserver);
-                                isExistsLive.removeObserver(this);
-                            }else {
-                                Toast.makeText(SearchActivity.this, "NOT TRUE OR FALSE", Toast.LENGTH_SHORT).show();
-                            }
-                        }
 
-                    };
-                    isExistsLive.observe(SearchActivity.this,isExistObserver);
-                    cartIdLive.removeObserver(this);
+            // get cart user id
+            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs",MODE_PRIVATE);
+            String cartId = sharedPreferences.getString("CartUserId","");
+            cartDetailViewModel.checkIfBeverageIsExist(id,cartId).observe(SearchActivity.this, new Observer<Integer>() {
+                @Override
+                public void onChanged(Integer integer) {
+                    if(integer == null){
+                        // add new
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
+                        ref.child(cartId + id).setValue(new CartDetail(cartId,id,1));
+                        Toast.makeText(SearchActivity.this, "Add To Cart",Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        //update
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
+                        ref.child(cartId + id).child("cartDetailQuantity").setValue(integer + 1);
+                        Toast.makeText(SearchActivity.this, "Add To Cart --- " + integer,Toast.LENGTH_SHORT).show();
+                    }
                 }
-            };
-            cartIdLive.observe((LifecycleOwner) SearchActivity.this, cartIdObserver);
+            });
         }
         else if(action.contains("single-beverage")){
             Intent intent = new Intent(SearchActivity.this,SingleBeverageActivity.class);

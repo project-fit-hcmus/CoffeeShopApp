@@ -1,0 +1,203 @@
+{
+  "beverages": {
+    "BE001": {
+      "beverageCost": "20$",
+      "beverageDescription": "Indulge in the timeless elegance of a cappuccino and discover why it remains a beloved favorite among coffee connoisseurs worldwide.",
+      "beverageId": "CAP001",
+      "beverageImage": "capuchino.png",
+      "beverageName": "Capuchino",
+      "beverageQuantitySeller": 0,
+      "beverageRating": 5,
+      "beverageType": "TY001",
+      "isBestSeller": true
+    },
+    "BE002": {
+      "beverageDescription": "Embrace the bold intensity and rich flavor of our espresso, the foundation of many coffee creations.",
+      "beverageId": "EXP002",
+      "beverageImage": "expresso.png",
+      "beverageName": "Expresso",
+      "beverageQuantitySeller": 1,
+      "beverageRating": 4.9,
+      "beverageType": "TY001",
+      "beverage_cost": "15$",
+      "beverateCost": "15$",
+      "isBestSeller": false
+    },
+    "BE003": {
+      "beverageCost": "23$",
+      "beverageDescription": " Indulge in the mellow sophistication of our Americano and discover a coffee experience that is both refined and approachable.",
+      "beverageId": "AME03",
+      "beverageImage": "americano.png",
+      "beverageName": "Americano",
+      "beverageQuantitySeller": 3,
+      "beverageRating": 4.6,
+      "beverageType": "TY001",
+      "isBestSeller": true
+    },
+    "BE004": {
+      "beverageCost": "25$",
+      "beverageDescription": "Our experienced baristas carefully prepare each Irish Coffee, ensuring the perfect balance of whiskey, coffee, and cream.",
+      "beverageId": "IRS04",
+      "beverageImage": "irish.png",
+      "beverageName": "Irish",
+      "beverageQuantitySeller": 0,
+      "beverageRating": 4.7,
+      "beverageType": "Ty001",
+      "isBestSeller": false
+    },
+    "BE005": {
+      "beverageCost": "23$",
+      "beverageDescription": " Embrace the rich, chocolatey indulgence of our Mocha and discover a coffee experience that is both decadent and delightful.",
+      "beverageId": "MOC01",
+      "beverageImage": "mocha.png",
+      "beverageName": "Mocha",
+      "beverageQuantitySeller": 1,
+      "beverageRating": 4.9,
+      "beverageType": "TY002",
+      "isBestSeller": true
+    },
+    "BE006": {
+      "beverageCost": "30$",
+      "beverageDescription": " Embrace the rich, buttery goodness of our handcrafted caramel and discover a flavor that will tantalize your taste buds and elevate your culinary creations.",
+      "beverageId": "CAM06",
+      "beverageImage": "caramel.png",
+      "beverageName": "Caramel",
+      "beverageQuantitySeller": 0,
+      "beverageRating": 4.5,
+      "beverageType": "TY002",
+      "isBestSeller": false
+    },
+    "BE007": {
+      "beverageCost": "25$",
+      "beverageDescription": "Indulge in the refreshing coolness and bold espresso flavor of our Iced Americano and discover a coffee experience that is both invigorating and satisfying.",
+      "beverageId": "ICE07",
+      "beverageImage": "iceAmericano.png",
+      "beverageName": "Ice Americano",
+      "beverageQuantitySeller": 2,
+      "beverageRating": 4.6,
+      "beverageType": "TY002",
+      "isBestSeller": false
+    },
+    "BE008": {
+      "beverageCost": "30$",
+      "beverageDescription": "Indulge in the refreshing coolness, creamy richness, and harmonious flavors of our Iced Oat Milk Latte and discover a coffee experience that is both unique and delightful.",
+      "beverageId": "OAT08",
+      "beverageImage": "oatcoffee.png",
+      "beverageName": "Oat Milk and Ice Coffee",
+      "beverageQuantitySeller": 10,
+      "beverageRating": 5,
+      "beverageType": "Ty002",
+      "isBestSeller": true
+    },
+    "BE009": {
+      "beverageCost": "24$",
+      "beverageDescription": " Our Peach Orange Lemongrass Tea is best enjoyed chilled or over ice, making it the perfect beverage for a hot day or any time you need a refreshing pick-me-up.",
+      "beverageId": "POGTEA",
+      "beverageImage": "Peachorangelemongrasstea.png",
+      "beverageName": "Peach Orange Lemongrass Tea",
+      "beverageQuantitySeller": 2,
+      "beverageRating": 4.9,
+      "beverageType": "TY003",
+      "isBestSeller": true
+    },
+    "BE010": {
+      "beverageCost": "18$",
+      "beverageDescription": "The sweetness comes from the natural sugars present in pineapples, while the tanginess adds a delightful zing that awakens your taste buds. The aroma is equally enticing, filled with the distinctive tropical fragrance of fresh pineapples.",
+      "beverageId": "PINJUI",
+      "beverageImage": "pineappleJuice.png",
+      "beverageName": "Pineapple Juice",
+      "beverageQuantitySeller": 4,
+      "beverageRating": 4.8,
+      "beverageType": "TY004",
+      "isBestSeller": false
+    },
+    "BE011": {
+      "beverageCost": "24$",
+      "beverageDescription": "The vibrant red color hints at the explosion of flavor waiting for you – a wave of sweetness balanced by a touch of subtle watermelon rind tartness. Every mouthful is refreshingly cool and hydrating, perfect for quenching your thirst on a hot day.",
+      "beverageId": "WMJUI",
+      "beverageImage": "watermelonJuice.png",
+      "beverageName": "Watermelon Juice",
+      "beverageQuantitySeller": 4,
+      "beverageRating": 5,
+      "beverageType": "TY004",
+      "isBestSeller": true
+    },
+    "BE012": {
+      "beverageCost": "35$",
+      "beverageDescription": " Its distinctive flavor profile is characterized by a harmonious blend of black tea and the zesty citrus notes of bergamot oil, a fragrant oil extracted from the rind of bergamot oranges.",
+      "beverageId": "ERGR1",
+      "beverageImage": "earlyGrayTea.png",
+      "beverageName": "Early Gray Tea",
+      "beverageQuantitySeller": 8,
+      "beverageRating": 4.8,
+      "beverageType": "TY003",
+      "isBestSeller": true
+    },
+    "BE013": {
+      "beverageCost": "28$",
+      "beverageDescription": "a captivating blend of delicate floral essence and subtle tea notes, has long been revered for its soothing and invigorating properties. The hallmark of jasmine tea lies in its captivating fragrance, a symphony of delicate jasmine blossoms intertwined with the gentle aroma of tea leaves",
+      "beverageId": "JAS01",
+      "beverageImage": "jasmineTea.png",
+      "beverageName": "Jasmine Tea",
+      "beverageQuantitySeller": 10,
+      "beverageRating": 4.5,
+      "beverageType": "TY003",
+      "isBestSeller": false
+    },
+    "BE014": {
+      "beverageCost": "33$",
+      "beverageDescription": " Green tea possesses a gentle, refreshing fragrance, reminiscent of fresh grass, jasmine blossoms, or young rice leaves, evoking a sense of tranquility and invigoration.",
+      "beverageId": "GREN2",
+      "beverageImage": "greentea.png",
+      "beverageName": "Green Tea",
+      "beverageQuantitySeller": 3,
+      "beverageRating": 4.9,
+      "beverageType": "TY003",
+      "isBestSeller": false
+    },
+    "BE015": {
+      "beverageCost": "28$",
+      "beverageDescription": "Herbal tea, also known as tisane or infusion, is a delightful beverage made from a diverse array of herbs, flowers, fruits, spices, and roots. Herbal teas encompass a vast spectrum of flavors, ranging from sweet and fruity to earthy and spicy. ",
+      "beverageId": "HER03",
+      "beverageImage": "herbalTea.png",
+      "beverageName": "Herbal Tea",
+      "beverageQuantitySeller": 2,
+      "beverageRating": 4.6,
+      "beverageType": "TY003",
+      "isBestSeller": true
+    },
+    "BE016": {
+      "beverageCost": "26$",
+      "beverageDescription": "Orange juice, with its vibrant flavor, nutritional value, and versatility, can be a delightful and beneficial addition to a healthy lifestyle. Orange juice offers a refreshing reminder of the sun's warmth and the goodness of nature's bounty.",
+      "beverageId": "ORAJUI",
+      "beverageImage": "orangejuice.png",
+      "beverageName": "Orange Juice",
+      "beverageQuantitySeller": 10,
+      "beverageRating": 4.8,
+      "beverageType": "TY004",
+      "isBestSeller": true
+    }
+  },
+  "types": {
+    "CFCOLD": {
+      "typeId": "TY002",
+      "typeImage": "cate_cold_coffee.png",
+      "typeName": "Cold Coffee"
+    },
+    "CFHOT": {
+      "typeId": "TY001",
+      "typeImage": "cate_hot_coffee.png",
+      "typeName": "Hot Coffee"
+    },
+    "CFJUI": {
+      "typeId": "TY004",
+      "typeImage": "cate_juice.png",
+      "typeName": "Juice"
+    },
+    "CFTEA": {
+      "typeId": "TY003",
+      "typeImage": "cate_tea.png",
+      "typeName": "Tea"
+    }
+  }
+}

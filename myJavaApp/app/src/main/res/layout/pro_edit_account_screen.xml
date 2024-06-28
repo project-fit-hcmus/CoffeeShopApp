@@ -16,15 +16,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         />
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/main_color"
-        app:layout_constraintTop_toBottomOf="@+id/editAccHeader"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:id="@+id/titleDivider"
-        tools:ignore="MissingConstraints" />
+
 
     <EditText
         android:id="@+id/editUsername"

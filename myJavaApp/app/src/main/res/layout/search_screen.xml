@@ -46,6 +46,7 @@
             android:background="@color/box_color"
             app:layout_constraintRight_toRightOf="parent"
             android:src="@drawable/places_ic_search"
+            android:stateListAnimator="@animator/button_animation"
             tools:ignore="MissingConstraints" />
 
 

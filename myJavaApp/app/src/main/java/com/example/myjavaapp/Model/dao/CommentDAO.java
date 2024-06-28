@@ -1,7 +1,7 @@
-package com.example.myjavaapp.Model.dao;
-
-import androidx.room.Dao;
-
-@Dao
-public interface CommentDAO {
-}
+//package com.example.myjavaapp.Model.dao;
+//
+//import androidx.room.Dao;
+//
+//@Dao
+//public interface CommentDAO {
+//}

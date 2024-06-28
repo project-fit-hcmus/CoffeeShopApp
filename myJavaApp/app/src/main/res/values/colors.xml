@@ -18,11 +18,20 @@
     <color name="background_sub">#EECFA1</color>
     <color name="toast_color">#7401DF</color>
 
-    <color name="test">#DFCCAF</color>
+    <color name="background_sub_2">#DFCCAF</color>
+    <color name="linear_top">#BE9B7B</color>
+    <color name="linear_bottom">#DFCCAF</color>
 
     <color name="colorPrimary">#fd1e01</color>
     <color name="colorPrimaryDark">#f51e02</color>
     <color name="colorAccent">#fff203</color>
     <color name="silver">#CFCFCF</color>
     <color name="yellow">#FFD700</color>
+
+<!--    BẢNG MÀU 1 -->
+    <color name="color_1_first">#5D7B6F</color>
+    <color name="color_1_second">#A4C3A2</color>
+    <color name="color_1_third">#B0D4B8</color>
+    <color name="color_1_fouth">#EAE7D6</color>
+    <color name="color_1_fifth">#EAE7D6</color>
 </resources>
