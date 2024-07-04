@@ -113,6 +113,8 @@ dependencies {
 //    implementation("android.arch.lifecycle:extensions:1.0.0")
 //    annotationProcessor("android.arch.lifecycle:compiler:1.0.0")
 
+    implementation ("com.google.firebase:firebase-appcheck-debug:16.0.0-beta01")
+
 
 
 

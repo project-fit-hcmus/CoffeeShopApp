@@ -43,6 +43,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import org.checkerframework.checker.units.qual.C;
+
 import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.ExecutorService;
@@ -184,18 +186,50 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
                 String cartId = sharedPreferences.getString("CartUserId","");
                 Toast.makeText(SingleBeverageActivity.this,cartId,Toast.LENGTH_SHORT).show();
 
-                cartDetailViewModel.checkIfBeverageIsExist(beverageId, cartId).observe(SingleBeverageActivity.this, new Observer<Integer>() {
+                LiveData<Integer> result = cartDetailViewModel.checkIfBeverageIsExist(beverageId, cartId);
+                result.observe(SingleBeverageActivity.this, new Observer<Integer>() {
                     @Override
                     public void onChanged(Integer integer) {
                         if(integer == null){
                             //add new
                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
-                            ref.child(cartId + beverageId).setValue(new CartDetail(cartId,beverageId,Integer.parseInt(txtQuantity.getText().toString())));
+                            CartDetail item = new CartDetail(cartId,beverageId,Integer.parseInt(txtQuantity.getText().toString()));
+
+                            ref.child(cartId + beverageId).setValue(item).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Log.d("SINGLE BEVERAGE - ADD NEW TO CART",txtQuantity.getText().toString());
+                                        cartDetailViewModel.insert(item);
+                                    }else{
+                                        Toast.makeText(SingleBeverageActivity.this, "Some thing wrong when add item to cartdetail!!!",Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+//                            cartDetailViewModel.insert(new CartDetail(cartId,beverageId,Integer.parseInt(txtQuantity.getText().toString())));
+                            Toast.makeText(SingleBeverageActivity.this, String.valueOf(Integer.parseInt(txtQuantity.getText().toString())), Toast.LENGTH_SHORT).show();
+                            txtQuantity.setText("0");
+                            result.removeObserver(this);
                         }
                         else{
                             //update
                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
-                            ref.child(cartId + beverageId).child("cartDetailQuantity").setValue(integer + Integer.parseInt(txtQuantity.getText().toString()));
+                            Integer number = integer + Integer.parseInt(txtQuantity.getText().toString());
+                            ref.child(cartId + beverageId).child("cartDetailQuantity").setValue(number).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()) {
+                                        cartDetailViewModel.UpdateQuantityOfAnItem(number, cartId, beverageId);
+                                    }else{
+                                        Toast.makeText(SingleBeverageActivity.this, "There is something wrong when update data in cartdetail!!!",Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+//                            cartDetailViewModel.UpdateQuantityOfAnItem(integer + Integer.parseInt(txtQuantity.getText().toString()), cartId,beverageId);
+                            Toast.makeText(SingleBeverageActivity.this, String.valueOf(integer + Integer.parseInt(txtQuantity.getText().toString())), Toast.LENGTH_SHORT).show();
+                            txtQuantity.setText("0");
+                            result.removeObserver(this);
+
                         }
                     }
                 });

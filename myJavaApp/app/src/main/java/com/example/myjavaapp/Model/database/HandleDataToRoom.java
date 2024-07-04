@@ -15,16 +15,22 @@ import com.example.myjavaapp.Model.dao.BeverageDAO;
 import com.example.myjavaapp.Model.dao.CartDAO;
 import com.example.myjavaapp.Model.dao.CartDetailDAO;
 import com.example.myjavaapp.Model.dao.FavoriteDAO;
+import com.example.myjavaapp.Model.dao.OrderDAO;
+import com.example.myjavaapp.Model.dao.OrderDetailDAO;
 import com.example.myjavaapp.Model.dao.TypeDAO;
 import com.example.myjavaapp.Model.entity.Beverage;
 import com.example.myjavaapp.Model.entity.Cart;
 import com.example.myjavaapp.Model.entity.CartDetail;
 import com.example.myjavaapp.Model.entity.Favorite;
+import com.example.myjavaapp.Model.entity.Order;
+import com.example.myjavaapp.Model.entity.OrderDetail;
 import com.example.myjavaapp.Model.entity.Type;
 import com.example.myjavaapp.ViewModel.BeverageViewModel;
 import com.example.myjavaapp.ViewModel.CartDetailViewModel;
 import com.example.myjavaapp.ViewModel.CartViewModel;
 import com.example.myjavaapp.ViewModel.FavoriteViewModel;
+import com.example.myjavaapp.ViewModel.OrderDetailViewModel;
+import com.example.myjavaapp.ViewModel.OrderViewModel;
 import com.example.myjavaapp.ViewModel.TypeViewModel;
 import com.google.firebase.database.DataSnapshot;
 
@@ -92,6 +98,7 @@ public class HandleDataToRoom {
 
     // làm sao chỉ lấy ra các cartItem của user (Trường hợp firebase lưu nhiều user)
     public void getAllCartDetail(){
+        Log.d("Start get Cartdetail","GET ALLL");
         CartDetailViewModel cartDetailViewModel = new ViewModelProvider((ViewModelStoreOwner) mainCtx).get(CartDetailViewModel.class);
         LiveData<DataSnapshot> liveData = cartDetailViewModel.getDataSnapshotLiveData();
         List<CartDetail> temp = new ArrayList<>();
@@ -103,6 +110,7 @@ public class HandleDataToRoom {
                     for(DataSnapshot i : dataSnapshot.getChildren()){
                             temp.add(new CartDetail(i.child("cartDetailId").getValue(String.class),i.child("cartDetailBeverage").getValue(String.class),i.child("cartDetailQuantity").getValue(Integer.class)));
                     }
+                    Log.d("number of cart detail", String.valueOf(temp.size()));
                         new Thread(new Runnable() {
                             @Override
                             public void run(){cartDetailDAO.insertAllCartDetail(temp);
@@ -110,6 +118,7 @@ public class HandleDataToRoom {
                         }).start();
 
                 }
+                liveData.removeObserver(this);              // fix error when delete and add item (TEST)
             }
         });
     }
@@ -163,4 +172,52 @@ public class HandleDataToRoom {
         });
     }
 
+    public void getAllOrder(String id){
+        OrderViewModel orderViewModel = new ViewModelProvider((ViewModelStoreOwner) mainCtx).get(OrderViewModel.class);
+        LiveData<DataSnapshot> liveData = orderViewModel.getDataSnapshotLiveData();
+        List<Order> temp = new ArrayList<>();
+        OrderDAO orderDAO = AppDatabase.getDatabase(mainCtx).orderDAO();
+        liveData.observe((LifecycleOwner) mainCtx, new Observer<DataSnapshot>() {
+            @Override
+            public void onChanged(DataSnapshot dataSnapshot) {
+                if(dataSnapshot != null){
+                    for(DataSnapshot i : dataSnapshot.getChildren()){
+                        if(i.child("orderUser").getValue(String.class).contains(id))
+                            temp.add(new Order(i.child("orderId").getValue(String.class),i.child("orderUser").getValue(String.class),i.child("orderPhone").getValue(String.class),i.child("orderNote").getValue(String.class), i.child("orderAddress").getValue(String.class),i.child("orderCost").getValue(Integer.class),i.child("orderStatus").getValue(String.class),i.child("orderDate").getValue(String.class),i.child("orderOveralImage").getValue(String.class)));
+                        Log.d("AFTER READ FAVORITE", String.valueOf(temp.size()));
+                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            orderDAO.insertAll(temp);
+                        }
+                    }).start();
+                }
+            }
+        });
+    }
+
+    public void getAllOrderDetail(){
+        OrderDetailViewModel orderDetailViewModel = new ViewModelProvider((ViewModelStoreOwner) mainCtx).get(OrderDetailViewModel.class);
+        LiveData<DataSnapshot> liveData = orderDetailViewModel.getDataSnapshotLiveData();
+        List<OrderDetail> temp = new ArrayList<>();
+        OrderDetailDAO orderDetailDAO = AppDatabase.getDatabase(mainCtx).orderDetailDAO();
+        liveData.observe((LifecycleOwner) mainCtx, new Observer<DataSnapshot>() {
+            @Override
+            public void onChanged(DataSnapshot dataSnapshot) {
+                if(dataSnapshot != null){
+                    for(DataSnapshot i : dataSnapshot.getChildren()){
+                        temp.add(new OrderDetail(i.child("orderDetailId").getValue(String.class),i.child("orderDetailBeverage").getValue(String.class),i.child("orderDetailQuantity").getValue(Integer.class)));
+                        Log.d("AFTER READ FAVORITE", String.valueOf(temp.size()));
+                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            orderDetailDAO.insertAll(temp);
+                        }
+                    }).start();
+                }
+            }
+        });
+    }
 }

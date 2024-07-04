@@ -26,11 +26,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHolder> implements CartItemClickListener {
     private Context mainCtx;
     private List<BeverageAndCartDetail> data;
+    private List<Boolean> check;
     private CartItemClickListener itemClickListener;
 
     public void setClickListener(CartItemClickListener clickListener) {
@@ -40,6 +42,10 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
     public CartItemAdapter(Context context, List<BeverageAndCartDetail> input){
         this.mainCtx = context;
         this.data = input;
+        this.check = new ArrayList<>(input.size());
+        for(int i = 0; i < input.size(); ++i){
+            check.add(false);
+        }
     }
     @NonNull
     @Override
@@ -84,10 +90,14 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
         });
 
         holder.checkbox.setOnClickListener(v -> {
-            if(holder.checkbox.isChecked())
+            if(holder.checkbox.isChecked()){
                 itemClickListener.onCartItemClick(position,"plus",item.beverage.getBeverageCost(),item.cartDetail.getCartDetailQuantity(),item);
-            else
+                check.set(position,true);
+            }
+            else{
                 itemClickListener.onCartItemClick(position,"subs",item.beverage.getBeverageCost(),item.cartDetail.getCartDetailQuantity(),item);
+                check.set(position,false);
+            }
         });
 
     }
@@ -96,6 +106,12 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
     public int getItemCount() {
         return data.size();
     }
+
+    public List<Boolean> getCheckList(){
+        return this.check;
+    }
+
+
 
     @Override
     public void onCartItemClick(Integer position, String id, String beverage,Integer number, BeverageAndCartDetail item) {

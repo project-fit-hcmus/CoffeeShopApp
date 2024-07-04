@@ -39,6 +39,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private TextView txtEmail;
     private AppCompatButton btnLogout;
     private AppCompatButton btnManageAcc, btnPayment, btnManagePass, btnMyOrder, btnPolicy;
+    private static final int LOGOUT_ACTION = 11111;
+    private static final int EDIT_ACCOUNT_ACTION = 11112;
+    private static final int ORDER_HISTORY_ACTION = 11113;
+    private static final int CHANGE_PASSWORD_ACTION = 11114;
+    private static final int PAYMENT_METHOD_ACTION = 11115;
+    private static final int POLICY_ACTION = 11116;
     private TextView userPhoneNumber, userLocation;
     @Nullable
     @Override
@@ -107,24 +113,27 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove("isLogin"); // Xóa giá trị "isLogin"
             editor.apply();
-            startActivityForResult(new Intent(getContext(), LoginActivity.class), 11111);
+            startActivityForResult(new Intent(getContext(), LoginActivity.class), LOGOUT_ACTION);
+
+
         }
         if(v.getId() == R.id.btnEditAccount){
             //chỉnh sửa nội dung, thông tin tài khoản người dùng(tên người dùng, userphoto, địa chỉ location)
-            startActivityForResult(new Intent(getContext(), EditAccountActivity.class),11112);
+            startActivityForResult(new Intent(getContext(), EditAccountActivity.class),EDIT_ACCOUNT_ACTION);
         }
         if(v.getId() == R.id.btnOrder){
             //xem thông tin đơn đặt hàng(đã giao, đang giao, đã hủy)
+            startActivityForResult(new Intent(getContext(), OrderHistory.class),ORDER_HISTORY_ACTION);
         }
         if(v.getId() == R.id.btnPassword){
             //thay đổi mật khẩu ...
-            startActivityForResult(new Intent(getContext(), ChangePasswordActivity.class),11113);
+            startActivityForResult(new Intent(getContext(), ChangePasswordActivity.class),CHANGE_PASSWORD_ACTION);
         }
         if(v.getId() == R.id.btnPayment){
             //quản lý phương thức thanh toán
         }
         if(v.getId() == R.id.btnPolicy){
-            startActivityForResult(new Intent(getContext(),PrivacyActivity.class), 11115);
+            startActivityForResult(new Intent(getContext(),PrivacyActivity.class), POLICY_ACTION);
         }
     }
 }

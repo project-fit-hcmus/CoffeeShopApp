@@ -1,7 +1,13 @@
 package com.example.myjavaapp.Model.entity;
 
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.room.Embedded;
 import androidx.room.Relation;
+
+import com.example.myjavaapp.Model.repository.OrderRepository;
 
 import java.util.List;
 

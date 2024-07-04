@@ -2,7 +2,9 @@ package com.example.myjavaapp.View;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.myjavaapp.Model.LocalViewModel.LocalBeverageViewModel;
+import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalCateViewModel;
 import com.example.myjavaapp.Model.dao.TypeDAO;
 import com.example.myjavaapp.Model.database.AppDatabase;
@@ -38,6 +41,8 @@ import com.example.myjavaapp.View.Adapter.CategoryAdapter;
 import com.example.myjavaapp.View.Adapter.homeBeverageAdapter;
 import com.example.myjavaapp.View.Interfaces.BeverageItemClickListener;
 import com.example.myjavaapp.View.Interfaces.ItemClickListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -61,6 +66,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
     private ArrayList<Type> listType;
     private LocalCateViewModel cateViewModel;
     private LocalBeverageViewModel beverageViewModel;
+    private LocalCartDetailViewModel cartDetailViewModel;
 
 
 
@@ -81,6 +87,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
         user = FirebaseAuth.getInstance().getCurrentUser();
         beverageViewModel = new ViewModelProvider(this).get(LocalBeverageViewModel.class);
         cateViewModel = new ViewModelProvider(this).get(LocalCateViewModel.class);
+        cartDetailViewModel = new ViewModelProvider(this).get(LocalCartDetailViewModel.class);
 
 
         Uri photo = user.getPhotoUrl();
@@ -174,52 +181,16 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
             Toast.makeText(getContext(),"Added",Toast.LENGTH_SHORT).show();
             String Uid = user.getUid();
             Log.d("USER ID",Uid);
-            LiveData<String> cartIdLive = AppDatabase.getDatabase(getContext()).cartDAO().getCartIdFromUser(Uid);
-            Observer<String> cartIdObserver = new Observer<String>() {
-                @Override
-                public void onChanged(String s) {
-                    Log.d("cart id",s);
-                    Log.d("beverage id",id);
-                    if (s != null && s.isEmpty())
-                        return;
-                    LiveData<Boolean> isExistsLive = AppDatabase.getDatabase(getContext()).cartDetailDAO().isExistBeverage(id, s);
-                    Observer<Boolean> isExistObserver = new Observer<Boolean>() {
-                        @Override
-                        public void onChanged(Boolean aBoolean) {
-                            if(aBoolean == false){
-                                Log.d("RESULT CHECK", "false");
-                                //thêm mới cho cartdetail
-                                CartDetail cartItem = new CartDetail(s,id,1);
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
-                                ref.child(s + id).setValue(cartItem);
-                                isExistsLive.removeObserver(this);
-                            }else if(aBoolean == true){
-                                Log.d("RESULT CHECK", "true");
-                                //update trong cardetail
-                                LiveData<Integer> quantityLive = AppDatabase.getDatabase(getContext()).cartDetailDAO().getQuantityOfCartDetail(s, id);
-                                Observer<Integer> quantityObserver = new Observer<Integer>() {
-                                    @Override
-                                    public void onChanged(Integer integer) {
-                                        Log.d("VALUE", String.valueOf(integer));
-                                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
-                                        String child = s + id;
-                                        ref.child(child).child("cartDetailQuantity").setValue(integer + 1);
-                                        quantityLive.removeObserver(this);
-                                    }
-                                };
-                                quantityLive.observe(getViewLifecycleOwner(),quantityObserver);
-                                isExistsLive.removeObserver(this);
-                            }else {
-                                Toast.makeText(getContext(), "NOT TRUE OR FALSE", Toast.LENGTH_SHORT).show();
-                            }
-                        }
 
-                    };
-                    isExistsLive.observe(getViewLifecycleOwner(),isExistObserver);
-                    cartIdLive.removeObserver(this);
-                }
-            };
-            cartIdLive.observe((LifecycleOwner) getContext(), cartIdObserver);
+            //get CartId
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyPrefs",Context.MODE_PRIVATE);
+            String cartId = sharedPreferences.getString("CartUserId","");
+            Toast.makeText(getContext(),cartId,Toast.LENGTH_SHORT).show();
+
+            handleUpdateData(id, cartId);
+
+
+
         }
         else if(action.contains("single-beverage")){
             Intent intent = new Intent(getContext(),SingleBeverageActivity.class);
@@ -248,5 +219,62 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
             Toast.makeText(getContext(),"111111",Toast.LENGTH_SHORT).show();
 
         }
+    }
+
+    public void handleUpdateData(String id, String cartId){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
+        LiveData<Boolean> isExistsLive = AppDatabase.getDatabase(getContext()).cartDetailDAO().isExistBeverage(id, cartId);
+        Observer<Boolean> isExistObserver = new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean == false){
+                    Log.d("RESULT CHECK", "false");
+                    //add new cart detail
+                    CartDetail cartItem = new CartDetail(cartId,id,1);
+                    ref.child(cartId + id).setValue(cartItem).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                cartDetailViewModel.insert(cartItem);
+                            }
+                            else{
+                                Toast.makeText(getContext(),"There are some error when add item to cart!!!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    isExistsLive.removeObserver(this);
+                }else if(aBoolean == true){
+                    Log.d("RESULT CHECK", "true");
+                    //update for cardetail
+                    LiveData<Integer> quantityLive = AppDatabase.getDatabase(getContext()).cartDetailDAO().getQuantityOfCartDetail(cartId, id);
+                    Observer<Integer> quantityObserver = new Observer<Integer>() {
+                        @Override
+                        public void onChanged(Integer integer) {
+                            Log.d("VALUE", String.valueOf(integer));
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
+                            String child = cartId + id;
+                            Integer number = integer + 1;
+                            ref.child(child).child("cartDetailQuantity").setValue(number).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful())
+                                        cartDetailViewModel.UpdateQuantityOfAnItem(number, cartId, id);
+                                    else
+                                        Toast.makeText(getContext(),"There are some errors when update item!!!",Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            quantityLive.removeObserver(this);
+                        }
+                    };
+                    quantityLive.observe(getViewLifecycleOwner(),quantityObserver);
+                    isExistsLive.removeObserver(this);
+                }else {
+                    Toast.makeText(getContext(), "NOT TRUE OR FALSE", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        };
+        isExistsLive.observe(getViewLifecycleOwner(),isExistObserver);
+
     }
 }

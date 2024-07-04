@@ -1,6 +1,9 @@
 package com.example.myjavaapp.Model.LocalViewModel;
 
 import android.app.Application;
+import android.util.Log;
+import android.widget.Toast;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import com.example.myjavaapp.Model.entity.CartDetail;
@@ -10,7 +13,6 @@ import java.util.List;
 public class LocalCartDetailViewModel extends AndroidViewModel {
     private final CartDetailRepository mRepository;
     private LiveData<List<CartDetail>> allCartDetails;
-
 
     public LocalCartDetailViewModel(Application application){
         super(application);
@@ -42,8 +44,20 @@ public class LocalCartDetailViewModel extends AndroidViewModel {
     }
     public void deleteItemInCartDetail(String beverage, String id){
         mRepository.deleteItemInCartDetail(beverage, id);
+        Log.d("Delete in view model","finish");
     }
     public void DeleteItemInCartDetail(CartDetail item){
         mRepository.DeleteItemInCartDetail(item);
     }
+
+    public void UpdateQuantityOfAnItem(Integer quantity, String cartId, String beverage){
+        mRepository.UpdateQuantityOfAnItem(quantity,cartId,beverage);
+    }
+
+    public void UpdateAnItem(CartDetail item){
+        mRepository.UpdateAnItem(item);
+    }
+//    public void updateInRealtime(){
+//        mRepository.updateInRealtime();
+//    }
 }

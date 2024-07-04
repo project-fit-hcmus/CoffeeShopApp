@@ -14,10 +14,15 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalCartViewModel;
+import com.example.myjavaapp.Model.LocalViewModel.LocalOrderViewModel;
 import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.database.HandleDataToRoom;
 import com.example.myjavaapp.Model.entity.Cart;
+import com.example.myjavaapp.Model.entity.CartDetail;
+import com.example.myjavaapp.Model.entity.CartDetailAndCart;
+import com.example.myjavaapp.Model.entity.Order;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.Adapter.ViewPagerAdapter;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -38,6 +43,8 @@ public class mainActivity extends AppCompatActivity {
 
     private HandleDataToRoom handleDataToRoom = new HandleDataToRoom(this);
     private LocalCartViewModel cartViewModel;
+    private LocalOrderViewModel orderViewModel;
+    private LocalCartDetailViewModel cartDetailViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
@@ -51,9 +58,11 @@ public class mainActivity extends AppCompatActivity {
         handleDataToRoom.getAllCart();
         handleDataToRoom.getAllCartDetail();
         handleDataToRoom.getAllFavoriteItems(user.getUid());
+        handleDataToRoom.getAllOrder(user.getUid());
+        handleDataToRoom.getAllOrderDetail();
 
         cartViewModel = new ViewModelProvider(this).get(LocalCartViewModel.class);
-
+        cartDetailViewModel = new ViewModelProvider(this).get(LocalCartDetailViewModel.class);
 
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNav);
         viewPager = (ViewPager) findViewById(R.id.viewPager);

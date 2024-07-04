@@ -24,6 +24,10 @@ public class Order {
     private Integer orderCost;
     @ColumnInfo(name="orderStatus")
     private String orderStatus;
+    @ColumnInfo(name = "orderDate")
+    private String orderDate;
+    @ColumnInfo(name = "orderOveralImage")
+    private String orderOveralImage;
     public String getOrderId(){return this.orderId;}
     public String getOrderUser(){return this.orderUser;}
     public String getOrderPhone(){return this.orderPhone;}
@@ -31,6 +35,8 @@ public class Order {
     public String getOrderAddress(){return this.orderAddress;}
     public Integer getOrderCost(){return this.orderCost;}
     public String getOrderStatus(){return this.orderStatus;}
+    public String getOrderDate(){return  this.orderDate;}
+    public String getOrderOveralImage() { return this.orderOveralImage;}
     public void setOrderId(String id){this.orderId = id;}
     public void setOrderUser(String id){this.orderUser = id;}
     public void setOrderPhone(String phone){this.orderPhone = phone;}
@@ -38,9 +44,11 @@ public class Order {
     public void setOrderAddress(String address){this.orderAddress = address;}
     public void setOrderCost(Integer cost){this.orderCost = cost;}
     public void setOrderStatus(String status){this.orderStatus = status;}
+    public void setOrderDate(String date){this.orderDate = date;}
+    public void setOrderOveralImage(String image){this.orderOveralImage = image;}
 
     public Order(){}
-    public Order(String id, String user, String phone, String note, String address, Integer cost, String status){
+    public Order(String id, String user, String phone, String note, String address, Integer cost, String status, String date, String image){
         this.orderId = id;
         this.orderUser = user;
         this.orderPhone = phone;
@@ -48,5 +56,7 @@ public class Order {
         this.orderAddress = address;
         this.orderCost = cost;
         this.orderStatus = status;
+        this.orderDate = date;
+        this.orderOveralImage = image;
     }
 }

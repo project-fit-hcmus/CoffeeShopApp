@@ -22,6 +22,9 @@ public class LocalBeverageViewModel extends AndroidViewModel {
         this.mRepository = new BeverageRepository(application);
         allBeverages = mRepository.getAllBeverages();
     }
+    public LiveData<List<Beverage>> getAllBeverages(){
+        return allBeverages;
+    }
     public void insertAll(List<Beverage> beverages){
         mRepository.insertAll(beverages);
     }
@@ -40,5 +43,6 @@ public class LocalBeverageViewModel extends AndroidViewModel {
     public LiveData<List<Beverage>> findBeverageWithKeyword(String keyword){
         return mRepository.findBeverageWithKeyword(keyword);
     }
+
 
 }

@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.myjavaapp.Model.entity.CartDetail;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public interface CartDetailDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertAllCartDetail(List<CartDetail> detailItems);
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertOneCartDetail(CartDetail item);
     @Query("SELECT * FROM CARTDETAIL WHERE cartDetailId = :cartId")
     public LiveData<List<CartDetail>> getDetailItemInCart(String cartId);
@@ -37,12 +38,14 @@ public interface CartDetailDAO {
     public void deleteBeverageInCartDetail(String beverage, String id);
 
 
+    @Query("UPDATE CartDetail SET cartDetailQuantity = :quantity WHERE cartDetailId = :id AND cartDetailBeverage = :beverage")
+    public void updateQuantityBeverage(Integer quantity, String id, String beverage);
+
 
 //    ------------------
 
-    @Query("UPDATE CartDetail SET cartDetailQuantity = :quantity WHERE cartDetailId = :id")
-    public void updateQuantityBeverage(Integer quantity, String id);
-
+    @Update
+    public void updateAnItem(CartDetail item);
     @Delete
     public void DeleteItemInCartDetail(CartDetail item);
 

@@ -1,6 +1,8 @@
 package com.example.myjavaapp.View;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,20 +10,25 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
 import com.example.myjavaapp.Model.entity.CartDetail;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.Adapter.homeBeverageAdapter;
 import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.entity.Beverage;
 import com.example.myjavaapp.View.Interfaces.BeverageItemClickListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -41,6 +48,7 @@ public class homeSingleCateScreen extends AppCompatActivity implements BeverageI
     private LiveData<String> titleCate;
     private Observer<String> observeTitle;
     private homeBeverageAdapter adapter;
+    private LocalCartDetailViewModel cartDetailViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +59,7 @@ public class homeSingleCateScreen extends AppCompatActivity implements BeverageI
         btnBack = (ImageButton) findViewById(R.id.btnBack);
         listData = (RecyclerView) findViewById(R.id.listBeverageInSingleCate);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        cartDetailViewModel = new ViewModelProvider(this).get(LocalCartDetailViewModel.class);
 
 
         // get data intent
@@ -109,52 +118,13 @@ public class homeSingleCateScreen extends AppCompatActivity implements BeverageI
             Toast.makeText(this,"Added",Toast.LENGTH_SHORT).show();
             String Uid = user.getUid();
             Log.d("USER ID",Uid);
-            LiveData<String> cartIdLive = AppDatabase.getDatabase(this).cartDAO().getCartIdFromUser(Uid);
-            Observer<String> cartIdObserver = new Observer<String>() {
-                @Override
-                public void onChanged(String s) {
-                    Log.d("cart id",s);
-                    Log.d("beverage id",id);
-                    if (s != null && s.isEmpty())
-                        return;
-                    LiveData<Boolean> isExistsLive = AppDatabase.getDatabase(homeSingleCateScreen.this).cartDetailDAO().isExistBeverage(id, s);
-                    Observer<Boolean> isExistObserver = new Observer<Boolean>() {
-                        @Override
-                        public void onChanged(Boolean aBoolean) {
-                            if(aBoolean == false){
-                                Log.d("RESULT CHECK", "false");
-                                //thêm mới cho cartdetail
-                                CartDetail cartItem = new CartDetail(s,id,1);
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
-                                ref.child(s + id).setValue(cartItem);
-                                isExistsLive.removeObserver(this);
-                            }else if(aBoolean == true){
-                                Log.d("RESULT CHECK", "true");
-                                //update trong cardetail
-                                LiveData<Integer> quantityLive = AppDatabase.getDatabase(homeSingleCateScreen.this).cartDetailDAO().getQuantityOfCartDetail(s, id);
-                                Observer<Integer> quantityObserver = new Observer<Integer>() {
-                                    @Override
-                                    public void onChanged(Integer integer) {
-                                        Log.d("VALUE", String.valueOf(integer));
-                                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
-                                        String child = s + id;
-                                        ref.child(child).child("cartDetailQuantity").setValue(integer + 1);
-                                        quantityLive.removeObserver(this);
-                                    }
-                                };
-                                quantityLive.observe(homeSingleCateScreen.this,quantityObserver);
-                                isExistsLive.removeObserver(this);
-                            }else {
-                                Toast.makeText(homeSingleCateScreen.this, "NOT TRUE OR FALSE", Toast.LENGTH_SHORT).show();
-                            }
-                        }
 
-                    };
-                    isExistsLive.observe(homeSingleCateScreen.this,isExistObserver);
-                    cartIdLive.removeObserver(this);
-                }
-            };
-            cartIdLive.observe(homeSingleCateScreen.this, cartIdObserver);
+            //get CartId
+            SharedPreferences sharedPreferences = homeSingleCateScreen.this.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+            String cartId = sharedPreferences.getString("CartUserId","");
+            Toast.makeText(homeSingleCateScreen.this,cartId,Toast.LENGTH_SHORT).show();
+
+            handleUpdateData(id, cartId);
         }
         else if(action.contains("single-beverage")){
             Intent intent = new Intent(this,SingleBeverageActivity.class);
@@ -164,5 +134,63 @@ public class homeSingleCateScreen extends AppCompatActivity implements BeverageI
             startActivityForResult(intent, 112233);
 
         }
+    }
+
+
+    public void handleUpdateData(String id, String cartId){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
+        LiveData<Boolean> isExistsLive = AppDatabase.getDatabase(homeSingleCateScreen.this).cartDetailDAO().isExistBeverage(id, cartId);
+        Observer<Boolean> isExistObserver = new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if(aBoolean == false){
+                    Log.d("RESULT CHECK", "false");
+                    //add new cart detail
+                    CartDetail cartItem = new CartDetail(cartId,id,1);
+                    ref.child(cartId + id).setValue(cartItem).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                cartDetailViewModel.insert(cartItem);
+                            }
+                            else{
+                                Toast.makeText(homeSingleCateScreen.this,"There are some error when add item to cart!!!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    isExistsLive.removeObserver(this);
+                }else if(aBoolean == true){
+                    Log.d("RESULT CHECK", "true");
+                    //update for cardetail
+                    LiveData<Integer> quantityLive = AppDatabase.getDatabase(homeSingleCateScreen.this).cartDetailDAO().getQuantityOfCartDetail(cartId, id);
+                    Observer<Integer> quantityObserver = new Observer<Integer>() {
+                        @Override
+                        public void onChanged(Integer integer) {
+                            Log.d("VALUE", String.valueOf(integer));
+                            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
+                            String child = cartId + id;
+                            Integer number = integer + 1;
+                            ref.child(child).child("cartDetailQuantity").setValue(number).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful())
+                                        cartDetailViewModel.UpdateQuantityOfAnItem(number, cartId, id);
+                                    else
+                                        Toast.makeText(homeSingleCateScreen.this,"There are some errors when update item!!!",Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            quantityLive.removeObserver(this);
+                        }
+                    };
+                    quantityLive.observe(homeSingleCateScreen.this,quantityObserver);
+                    isExistsLive.removeObserver(this);
+                }else {
+                    Toast.makeText(homeSingleCateScreen.this, "NOT TRUE OR FALSE", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        };
+        isExistsLive.observe(homeSingleCateScreen.this,isExistObserver);
+
     }
 }

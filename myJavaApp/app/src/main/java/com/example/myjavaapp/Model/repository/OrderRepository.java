@@ -19,11 +19,15 @@ public class OrderRepository {
     public OrderRepository(Application application){
         this.application = application;
         orderDAO = AppDatabase.getDatabase(application).orderDAO();
-        allOrders = orderDAO.getAllOrder();
     }
 
-    public LiveData<List<Order>> getAllOrders(){
+    public LiveData<List<Order>> getAllOrders(String Uid){
+        allOrders = orderDAO.getAllOrder(Uid);
         return allOrders;
+    }
+
+    public LiveData<List<Order>> getAllOrderBaseOnStatus(String user, String status){
+        return orderDAO.getAllOrderBaseOnStatus(user,status);
     }
 
 }
