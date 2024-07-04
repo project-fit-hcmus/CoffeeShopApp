@@ -19,4 +19,7 @@ public class LocalODAndBEViewModel extends AndroidViewModel {
         super(application);
         mRepository = new ODAndBERepository(application);
     }
+    public LiveData<List<OrderDetailAndBeverage>> getAllItemsInOrder(String orderId){
+        return mRepository.getAllItemsInOrder(orderId);
+    }
 }

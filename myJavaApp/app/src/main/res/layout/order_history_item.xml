@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_1_fifth"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <ImageView
         android:layout_width="80dp"
@@ -30,12 +31,13 @@
             android:id="@+id/address"/>
         <View android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/black"/>
+            android:background="@color/light_gray"/>
         <TextView
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:id="@+id/status"
             android:layout_marginLeft="5dp"
+            android:textColor="@color/color_1_first"
             android:text="Đã hoàn thành"/>
     </LinearLayout>
     <LinearLayout
@@ -55,21 +57,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/date"
+                android:textColor="@color/color_1_first"
                 android:text="22/4/2023"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/phone"
+                android:textColor="@color/color_1_first"
                 android:text="0796728944"/>
         </LinearLayout>
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/black"/>
+            android:background="@color/light_gray"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/cost"
+            android:textColor="@color/color_1_first"
             android:layout_marginLeft="5dp"
             android:text="130$"/>
 
@@ -77,10 +82,11 @@
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/image"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:background="@color/light_gray"
+        app:layout_constraintTop_toBottomOf="@id/group2"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

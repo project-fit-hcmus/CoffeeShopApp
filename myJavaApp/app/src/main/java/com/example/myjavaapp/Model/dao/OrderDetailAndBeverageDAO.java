@@ -10,7 +10,7 @@ import java.util.List;
 
 @Dao
 public interface OrderDetailAndBeverageDAO {
-    @Query("SELECT OrderDetail.*, Beverage.* FROM OrderDetail, Beverage WHERE orderDetailBeverage = beverageId")
-    LiveData<List<OrderDetailAndBeverage>> getAllBeverageInOrder();
+    @Query("SELECT OrderDetail.*, Beverage.* FROM OrderDetail, Beverage WHERE Beverage.beverageId = OrderDetail.orderDetailBeverage AND OrderDetail.orderDetailId = :orderId")
+    LiveData<List<OrderDetailAndBeverage>> getAllBeverageInOrder(String orderId);
 
 }

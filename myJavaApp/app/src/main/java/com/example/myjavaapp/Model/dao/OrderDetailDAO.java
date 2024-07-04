@@ -16,4 +16,5 @@ public interface OrderDetailDAO {
     public LiveData<OrderDetail> getAllOrderDetailOfUser(String user);
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertAll(List<OrderDetail> lists);
+
 }

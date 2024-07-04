@@ -21,4 +21,7 @@ public class ODAndBERepository {
         this.application = application;
         orderDetailAndBeverageDAO = AppDatabase.getDatabase(application).orderDetailAndBeverageDAO();
     }
+    public LiveData<List<OrderDetailAndBeverage>> getAllItemsInOrder(String order){
+        return orderDetailAndBeverageDAO.getAllBeverageInOrder(order);
+    }
 }
