@@ -60,6 +60,7 @@ public class homeSingleCateScreen extends AppCompatActivity implements BeverageI
         listData = (RecyclerView) findViewById(R.id.listBeverageInSingleCate);
         user = FirebaseAuth.getInstance().getCurrentUser();
         cartDetailViewModel = new ViewModelProvider(this).get(LocalCartDetailViewModel.class);
+        adapter = new homeBeverageAdapter(homeSingleCateScreen.this);
 
 
         // get data intent
@@ -89,7 +90,7 @@ public class homeSingleCateScreen extends AppCompatActivity implements BeverageI
                 if(beverages != null && beverages.isEmpty())
                     return;
                 // set adapter for recycler view
-                adapter = new homeBeverageAdapter(homeSingleCateScreen.this,beverages);
+                adapter.setAdapterData(beverages);
                 adapter.setItemClickListener(homeSingleCateScreen.this);
                 listData.setAdapter(adapter);
                 listData.setLayoutManager(new GridLayoutManager(homeSingleCateScreen.this,2));

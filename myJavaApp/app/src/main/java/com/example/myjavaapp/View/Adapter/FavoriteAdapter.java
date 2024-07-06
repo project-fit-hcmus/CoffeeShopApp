@@ -16,8 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.example.myjavaapp.Model.entity.Beverage;
+import com.example.myjavaapp.Model.entity.BeverageAndCartDetail;
+import com.example.myjavaapp.Model.entity.BeverageAndType;
 import com.example.myjavaapp.Model.entity.FavoriteAndBeverage;
+import com.example.myjavaapp.Model.entity.Type;
 import com.example.myjavaapp.R;
+import com.example.myjavaapp.View.Interfaces.BeverageItemClickListener;
+import com.example.myjavaapp.View.Interfaces.ItemClickListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
@@ -25,14 +30,18 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
-public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.MyViewHolder> {
+public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.MyViewHolder> implements BeverageItemClickListener {
 
     private Context main;
-    private List<Beverage> data;
+    private List<BeverageAndType> data;
+    private BeverageItemClickListener listener;
 
-    public FavoriteAdapter(Context context, List<Beverage> input){
+    public FavoriteAdapter(Context context, List<BeverageAndType> input){
         this.data = input;
         this.main = context;
+    }
+    public void setListener(BeverageItemClickListener click){
+        this.listener = click;
     }
 
     @NonNull
@@ -44,7 +53,8 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Beverage item = data.get(position);
+        Beverage item = data.get(position).beverage;
+        Type type = data.get(position).type;
         String name = item.getBeverageImage();
         StorageReference storageReference = FirebaseStorage.getInstance().getReference("images/beverages/" + name);
         Task<Uri> downloadUrlTask = storageReference.getDownloadUrl();
@@ -68,6 +78,13 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.MyView
 
         holder.name.setText(item.getBeverageName());
         holder.price.setText(item.getBeverageCost());
+        holder.type.setText(type.getTypeName());
+        holder.itemView.setOnClickListener(v -> {
+            listener.onBeverageClick(position, item.getBeverageId(), "single-beverage");
+        });
+        holder.btnAddToCart.setOnClickListener(v -> {
+            listener.onBeverageClick(position, item.getBeverageId(), "add-to-cart");
+        });
 
 
     }
@@ -77,11 +94,17 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.MyView
         return data.size();
     }
 
+
+
+    @Override
+    public void onBeverageClick(Integer position, String id, String action) {
+
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder{
         private ImageView icon;
         private TextView name, type, price;
         private Button btnAddToCart;
-        private ImageButton btnFavorite;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             icon = itemView.findViewById(R.id.mainImg);
@@ -89,7 +112,6 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.MyView
             type = itemView.findViewById(R.id.favoriteType);
             price = itemView.findViewById(R.id.favoritePrice);
             btnAddToCart = itemView.findViewById(R.id.btnAddToCart);
-            btnFavorite = itemView.findViewById(R.id.btnFavorite);
         }
     }
 }

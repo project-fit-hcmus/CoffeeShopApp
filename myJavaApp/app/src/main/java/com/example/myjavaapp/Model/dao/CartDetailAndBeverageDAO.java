@@ -16,8 +16,11 @@ import java.util.Map;
 @Dao
 public interface CartDetailAndBeverageDAO {
     @Transaction
-//    @Query("SELECT * FROM CartDetail WHERE cartDetailId = :cartId")
-    @Query("SELECT CartDetail.*, Beverage.* FROM CartDetail, Beverage, Cart WHERE CartDetail.cartDetailId = Cart.cartId AND Cart.cartUser = :id AND CartDetail.cartDetailBeverage = Beverage.beverageId")
+//    @Query("SELECT CartDetail.*, Beverage.* FROM CartDetail, Beverage, Cart WHERE CartDetail.cartDetailId = Cart.cartId AND Cart.cartUser = :id AND CartDetail.cartDetailBeverage = Beverage.beverageId")
+//    public LiveData<List<BeverageAndCartDetail>> getBeverageInCartDetail(String id);
+
+//    @Transaction
+    @Query("SELECT Beverage.*, CartDetail.*, Type.* FROM CartDetail, Beverage, Cart, Type WHERE Type.TypeId =Beverage.beverageType AND CartDetail.cartDetailId = Cart.cartId AND Cart.cartUser = :id AND CartDetail.cartDetailBeverage = Beverage.beverageId")
     public LiveData<List<BeverageAndCartDetail>> getBeverageInCartDetail(String id);
 }
 

@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer;
 import com.example.myjavaapp.Model.dao.FavoriteDAO;
 import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.entity.Beverage;
+import com.example.myjavaapp.Model.entity.BeverageAndType;
 import com.example.myjavaapp.Model.entity.Favorite;
 import com.google.android.gms.vision.barcode.Barcode;
 
@@ -36,16 +37,11 @@ public class FavoriteRepository {
             favoriteDAO.insertAllFavoriteItems(favorites);
         });
     }
-
-//    public void deleteItemInFavorite(Favorite favorite){
-//        AppDatabase.databaseWriteExecutor.execute(() -> {
-//            favoriteDAO.deleteItemInFavorite(favorite);
-//        });
-//    }
-//
-//    public LiveData<Favorite> findFavoriteItemFromId(String id){
-//        return favoriteDAO.findFavoriteItemFromId(id);
-//    }
+    public void insertAnItem(Favorite favorite){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            favoriteDAO.insertAnItem(favorite);
+        });
+    }
 
     public void deleteAlbumById(String id){
 
@@ -60,5 +56,9 @@ public class FavoriteRepository {
 
     public LiveData<List<Beverage>> getAllBeverageInFavorite(){
         return favoriteDAO.getAllFavoriteBeverage();
+    }
+
+    public LiveData<List<BeverageAndType>> getAllBeverageInFavoriteWithType(String UId){
+        return favoriteDAO.getAllFavoriteBeverageWithType(UId);
     }
 }

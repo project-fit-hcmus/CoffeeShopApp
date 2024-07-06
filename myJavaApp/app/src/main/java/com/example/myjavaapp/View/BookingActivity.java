@@ -94,12 +94,10 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(BookingActivity.this, "Empty",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Toast.makeText(BookingActivity.this, "number of data: " + String.valueOf(beverageAndCartDetails.size()), Toast.LENGTH_SHORT).show();
                 List<BeverageAndCartDetail> rawData = new ArrayList<>();
                 for(int i = 0; i < result.size(); ++i){
                     rawData.add(beverageAndCartDetails.get(result.get(i)));
                 }
-                Toast.makeText(BookingActivity.this, "Number of raw data " + rawData.size(), Toast.LENGTH_SHORT).show();
                 adapter = new BookingItemAdapter(BookingActivity.this, rawData);
                 listItem.setAdapter(adapter);
                 listItem.setLayoutManager(new GridLayoutManager(BookingActivity.this, 1));
@@ -167,7 +165,6 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             DatabaseReference refCart = FirebaseDatabase.getInstance().getReference("cartdetails");
             for(BeverageAndCartDetail i : data){
                 //xóa các item trong cart
-                Toast.makeText(BookingActivity.this,i.cartDetail.getCartDetailId() + i.cartDetail.getCartDetailBeverage(),Toast.LENGTH_SHORT).show();
                 refCart.child(i.cartDetail.getCartDetailId() + i.cartDetail.getCartDetailBeverage()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

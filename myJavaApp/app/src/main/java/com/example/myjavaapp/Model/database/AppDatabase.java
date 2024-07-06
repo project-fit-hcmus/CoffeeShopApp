@@ -7,6 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
+import com.example.myjavaapp.Model.converter.BeverageAndTypeConverter;
 import com.example.myjavaapp.Model.converter.DateConverter;
 import com.example.myjavaapp.Model.dao.BeverageDAO;
 import com.example.myjavaapp.Model.dao.CartDAO;
@@ -35,7 +36,7 @@ import java.util.concurrent.Executors;
         version = 1,
         exportSchema = true // set true to be able to use automated migration in the future updates
         )
-@TypeConverters(DateConverter.class)
+@TypeConverters( BeverageAndTypeConverter.class)
 public abstract  class AppDatabase extends RoomDatabase{
     private static volatile AppDatabase sInstance;
     private static final int NUMBER_OF_THREADS = 4;

@@ -121,9 +121,12 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
 
                             // Load image using GlideUrl
                             // ở đây phải sử dụng getApplicationContext nếu không sẽ xảy ra lỗi "You cannot start a load for a destroyed activity in relativelayout image using glide"
-                            Glide.with(SingleBeverageActivity.this)
-                                    .load(glideUrl)
-                                    .into(beverageIcon);
+                            if(!isFinishing() && !isDestroyed()){
+                                Glide.with(SingleBeverageActivity.this.getApplicationContext())
+                                        .load(glideUrl)
+                                        .into(beverageIcon);
+                            }
+
                         } else {
                             // Handle download URL retrieval error
                         }
@@ -137,8 +140,7 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
             }
         });
 
-        btnFavorite.setImageResource(R.drawable.baseline_favorite_border_24);
-        btnFavorite.setTag("unfavorite");
+
 
         favoriteViewModel.getAllFavorites().observe(this, new Observer<List<Favorite>>() {
             @Override
@@ -146,7 +148,7 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
                 if(favorites != null && favorites.isEmpty())
                     return;
                 for(Favorite i : favorites){
-                    if(i.getFavoriteBeverage().equals(beverageId)){
+                    if(i.getFavoriteBeverage().contains(beverageId)){
                         btnFavorite.setImageResource(R.drawable.baseline_favorite_24);
                         btnFavorite.setTag("favorite");
                         return;
@@ -154,6 +156,8 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
                 }
             }
         });
+        btnFavorite.setImageResource(R.drawable.baseline_favorite_border_24);
+        btnFavorite.setTag("unfavorite");
 
 
         btnBack.setOnClickListener(this);
@@ -175,7 +179,6 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
         }
         if(v.getId() == R.id.btnSubstract){
              txtQuantity.setText(String.valueOf(Integer.parseInt(txtQuantity.getText().toString()) - 1));
-
         }
         if(v.getId() == R.id.btnAddToCart){
             // add to realtime database
@@ -184,7 +187,6 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
             }else {
                 SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs",MODE_PRIVATE);
                 String cartId = sharedPreferences.getString("CartUserId","");
-                Toast.makeText(SingleBeverageActivity.this,cartId,Toast.LENGTH_SHORT).show();
 
                 LiveData<Integer> result = cartDetailViewModel.checkIfBeverageIsExist(beverageId, cartId);
                 result.observe(SingleBeverageActivity.this, new Observer<Integer>() {
@@ -206,8 +208,6 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
                                     }
                                 }
                             });
-//                            cartDetailViewModel.insert(new CartDetail(cartId,beverageId,Integer.parseInt(txtQuantity.getText().toString())));
-                            Toast.makeText(SingleBeverageActivity.this, String.valueOf(Integer.parseInt(txtQuantity.getText().toString())), Toast.LENGTH_SHORT).show();
                             txtQuantity.setText("0");
                             result.removeObserver(this);
                         }
@@ -225,8 +225,7 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
                                     }
                                 }
                             });
-//                            cartDetailViewModel.UpdateQuantityOfAnItem(integer + Integer.parseInt(txtQuantity.getText().toString()), cartId,beverageId);
-                            Toast.makeText(SingleBeverageActivity.this, String.valueOf(integer + Integer.parseInt(txtQuantity.getText().toString())), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SingleBeverageActivity.this, "Added", Toast.LENGTH_SHORT).show();
                             txtQuantity.setText("0");
                             result.removeObserver(this);
 
@@ -240,19 +239,28 @@ public class SingleBeverageActivity extends AppCompatActivity implements View.On
             if(btnFavorite.getTag().equals("favorite")){
                 btnFavorite.setImageResource(R.drawable.baseline_favorite_border_24);
                 Toast.makeText(SingleBeverageActivity.this,"Remove from favorite",Toast.LENGTH_SHORT).show();
-                //xóa trên local (ERROR: đã xóa nhưng sau khi trở về mainFragment thì bị khôi phục lại)
-                favoriteViewModel.deleteFavoriteById(beverageId);
-//                favoriteViewModel.delete(beverageId);
-//                //xóa trên realtime
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("favorites");
-                ref.child(beverageId).removeValue();
+                ref.child(beverageId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        favoriteViewModel.deleteFavoriteById(beverageId);
+                    }
+                });
             }else{
                 Toast.makeText(SingleBeverageActivity.this,"Add to favorite",Toast.LENGTH_SHORT).show();
-
                 btnFavorite.setImageResource(R.drawable.baseline_favorite_24);
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("favorites");
-                ref.child(beverageId).setValue(new Favorite(user.getUid(),beverageId));
+                Favorite item = new Favorite(user.getUid(),beverageId);
+                ref.child(beverageId).setValue(item).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        //add new item to favorites list
+                        favoriteViewModel.insertAnItem(item);
+                    }
+                });
             }
         }
     }
+
+
 }

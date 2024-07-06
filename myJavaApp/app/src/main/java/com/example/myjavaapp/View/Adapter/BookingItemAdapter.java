@@ -65,7 +65,7 @@ public class BookingItemAdapter extends RecyclerView.Adapter<BookingItemAdapter.
 
         holder.txtCost.setText(item.beverage.getBeverageCost());
         holder.txtQuantity.setText("x" + item.cartDetail.getCartDetailQuantity().toString());
-        holder.txtType.setText(item.beverage.getBeverageType());
+        holder.txtType.setText(item.type.getTypeName());
         holder.txtName.setText(item.beverage.getBeverageName());
 
 

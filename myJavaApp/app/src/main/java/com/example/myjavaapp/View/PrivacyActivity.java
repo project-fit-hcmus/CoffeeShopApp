@@ -1,10 +1,13 @@
 package com.example.myjavaapp.View;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.utils.widget.ImageFilterButton;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +21,7 @@ import java.util.List;
 public class PrivacyActivity extends AppCompatActivity {
     private TextView txtTitle;
     private RecyclerView content;
+    private ImageFilterButton btnBack;
     List<String> headers = new ArrayList<>();
     List<String> contents = new ArrayList<>();
     List<Integer> images = new ArrayList<>();
@@ -27,11 +31,20 @@ public class PrivacyActivity extends AppCompatActivity {
         setContentView(R.layout.private_policy_screen);
         txtTitle = findViewById(R.id.mainTitle);
         content = findViewById(R.id.mainContent);
+        btnBack = findViewById(R.id.btnBack);
 
         txtTitle.setText("Private Policy");
         setData();
         content.setAdapter(new PrivacyAdapter(this,headers,contents,images));
         content.setLayoutManager(new GridLayoutManager(this,1));
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
     }
 
     public void setData(){

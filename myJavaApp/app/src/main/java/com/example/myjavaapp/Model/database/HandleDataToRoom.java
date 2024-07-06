@@ -118,7 +118,7 @@ public class HandleDataToRoom {
                         }).start();
 
                 }
-                liveData.removeObserver(this);              // fix error when delete and add item (TEST)
+                liveData.removeObserver(this);
             }
         });
     }
@@ -168,6 +168,7 @@ public class HandleDataToRoom {
                         }
                     }).start();
                 }
+                liveData.removeObserver(this);
             }
         });
     }

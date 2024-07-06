@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.example.myjavaapp.Model.entity.Beverage;
+import com.example.myjavaapp.Model.entity.BeverageAndType;
 import com.example.myjavaapp.Model.entity.Favorite;
 import com.example.myjavaapp.Model.repository.FavoriteRepository;
 import com.facebook.internal.AppCall;
@@ -30,14 +31,18 @@ public class LocalFavoriteViewModel extends AndroidViewModel {
         mRepository.insertAllFavorite(favorites);
     }
 
-//    public void delete(Favorite favorite){
-//        mRepository.deleteItemInFavorite(favorite);
-//    }
+    public void insertAnItem(Favorite favorite){
+        mRepository.insertAnItem(favorite);
+    }
 
     public void deleteFavoriteById(String id){
         mRepository.deleteAlbumById(id);
     }
     public LiveData<List<Beverage>> getAllBeverageFromFavorite(){
         return mRepository.getAllBeverageInFavorite();
+    }
+
+    public LiveData<List<BeverageAndType>> getAllBeverageFromFavoriteWithType(String UId){
+        return mRepository.getAllBeverageInFavoriteWithType(UId);
     }
 }

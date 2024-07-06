@@ -46,6 +46,7 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
     private FirebaseUser user;
     private LocalBeverageViewModel beverageViewModel;
     private LocalCartDetailViewModel cartDetailViewModel;
+    private homeBeverageAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +57,8 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
         btnSearch = findViewById(R.id.btnSearch);
         txtKeyword = findViewById(R.id.hintKeywork);
         recyclerView = findViewById(R.id.findRecyclerview);
+        adapter = new homeBeverageAdapter(SearchActivity.this);
+
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         beverageViewModel = new ViewModelProvider(this).get(LocalBeverageViewModel.class);
@@ -73,11 +76,12 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
         beverageViewModel.findBeverageWithKeyword(factor).observe(this, new Observer<List<Beverage>>() {
             @Override
             public void onChanged(List<Beverage> beverages) {
-                if(beverages != null && beverages.isEmpty()) {
-                    Toast.makeText(SearchActivity.this, "IS EMPTY",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                homeBeverageAdapter adapter = new homeBeverageAdapter(SearchActivity.this, beverages);
+//                if(beverages != null && beverages.isEmpty()) {
+//                    Toast.makeText(SearchActivity.this, "IS EMPTY",Toast.LENGTH_SHORT).show();
+//                    adapter.setAdapterData(beverages);
+//                    recyclerView.getAdapter().notifyDataSetChanged();
+//                }
+                adapter.setAdapterData(beverages);
                 adapter.setItemClickListener(SearchActivity.this);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new GridLayoutManager(SearchActivity.this,2));
@@ -103,15 +107,16 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
                     String key = edtSearch.getText().toString();
                     txtKeyword.setText("Kết quả tìm kiếm: " + key);
                     String factor = "%" + key + "%";
+                    edtSearch.setText("");
 
                     beverageViewModel.findBeverageWithKeyword(factor).observe(SearchActivity.this, new Observer<List<Beverage>>() {
                         @Override
                         public void onChanged(List<Beverage> beverages) {
-                            if(beverages != null && beverages.isEmpty()) {
-                                Toast.makeText(SearchActivity.this, "IS EMPTY",Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            homeBeverageAdapter adapter = new homeBeverageAdapter(SearchActivity.this, beverages);
+//                            if(beverages != null && beverages.isEmpty()) {
+//                                Toast.makeText(SearchActivity.this, "IS EMPTY",Toast.LENGTH_SHORT).show();
+//                                return;
+//                            }
+                            adapter.setAdapterData(beverages);
                             adapter.setItemClickListener(SearchActivity.this);
                             recyclerView.setAdapter(adapter);
                             recyclerView.setLayoutManager(new GridLayoutManager(SearchActivity.this,2));

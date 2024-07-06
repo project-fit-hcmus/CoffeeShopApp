@@ -57,7 +57,9 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull CartItemAdapter.ViewHolder holder, int position) {
         BeverageAndCartDetail item = data.get(position);
+//        String name = item.beverage.getBeverageImage();
         String name = item.beverage.getBeverageImage();
+
         StorageReference storageReference = FirebaseStorage.getInstance().getReference("images/beverages/" + name);
         Task<Uri> downloadUrlTask = storageReference.getDownloadUrl();
         downloadUrlTask = downloadUrlTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -78,8 +80,12 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
             }
         });
 
+//        holder.name.setText(item.beverage.getBeverageName());
         holder.name.setText(item.beverage.getBeverageName());
+//        holder.price.setText(item.beverage.getBeverageCost());
         holder.price.setText(item.beverage.getBeverageCost());
+        holder.type.setText(item.type.getTypeName());
+
         holder.quantity.setText(item.cartDetail.getCartDetailQuantity().toString());
 
         holder.btnAdd.setOnClickListener(v -> {

@@ -67,6 +67,8 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
     private LocalCateViewModel cateViewModel;
     private LocalBeverageViewModel beverageViewModel;
     private LocalCartDetailViewModel cartDetailViewModel;
+    private homeBeverageAdapter adapter ;
+
 
 
 
@@ -81,6 +83,8 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
         lstBeverages = (RecyclerView) v.findViewById(R.id.homeSubMainItems);
         edtSearch = (EditText) v.findViewById(R.id.keywordSearchHome);
         btnSearch = (ImageButton) v.findViewById(R.id.btnSearch);
+
+        homeBeverageAdapter adapter = new homeBeverageAdapter(getContext());
 
 
         //get user data
@@ -119,7 +123,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
             public void onChanged(List<Beverage> beverages) {
                 if(beverages != null && beverages.isEmpty())
                     return;
-                homeBeverageAdapter adapter = new homeBeverageAdapter(getContext(), beverages);
+                adapter.setAdapterData(beverages);
                 adapter.setItemClickListener(HomeFragment.this);
                 lstBeverages.setAdapter(adapter);
                 lstBeverages.setLayoutManager(new GridLayoutManager(getContext(),2));
@@ -185,7 +189,6 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
             //get CartId
             SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyPrefs",Context.MODE_PRIVATE);
             String cartId = sharedPreferences.getString("CartUserId","");
-            Toast.makeText(getContext(),cartId,Toast.LENGTH_SHORT).show();
 
             handleUpdateData(id, cartId);
 
@@ -212,11 +215,9 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK)
         if(requestCode == 112233){
-            Toast.makeText(getContext(),"112233",Toast.LENGTH_SHORT).show();
 
         }
         if(requestCode == 111111){
-            Toast.makeText(getContext(),"111111",Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -269,7 +270,7 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
                     quantityLive.observe(getViewLifecycleOwner(),quantityObserver);
                     isExistsLive.removeObserver(this);
                 }else {
-                    Toast.makeText(getContext(), "NOT TRUE OR FALSE", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to add to cart", Toast.LENGTH_SHORT).show();
                 }
             }
 
