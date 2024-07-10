@@ -5,38 +5,37 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.room.TypeConverters;
-
-import com.example.myjavaapp.Model.converter.BeverageAndTypeConverter;
-import com.example.myjavaapp.Model.converter.DateConverter;
 import com.example.myjavaapp.Model.dao.BeverageDAO;
 import com.example.myjavaapp.Model.dao.CartDAO;
 import com.example.myjavaapp.Model.dao.CartDetailAndBeverageDAO;
 import com.example.myjavaapp.Model.dao.CartDetailDAO;
+import com.example.myjavaapp.Model.dao.CommentDAO;
 import com.example.myjavaapp.Model.dao.FavoriteAndBeverageDAO;
 import com.example.myjavaapp.Model.dao.FavoriteDAO;
 import com.example.myjavaapp.Model.dao.OrderDAO;
 import com.example.myjavaapp.Model.dao.OrderDetailAndBeverageDAO;
 import com.example.myjavaapp.Model.dao.OrderDetailDAO;
 import com.example.myjavaapp.Model.dao.TypeDAO;
+import com.example.myjavaapp.Model.dao.UserDAO;
 import com.example.myjavaapp.Model.entity.Beverage;
-import com.example.myjavaapp.Model.entity.BeverageAndCartDetail;
 import com.example.myjavaapp.Model.entity.Cart;
 import com.example.myjavaapp.Model.entity.CartDetail;
+import com.example.myjavaapp.Model.entity.Comment;
 import com.example.myjavaapp.Model.entity.Favorite;
 import com.example.myjavaapp.Model.entity.Order;
 import com.example.myjavaapp.Model.entity.OrderDetail;
 import com.example.myjavaapp.Model.entity.Type;
+import com.example.myjavaapp.Model.entity.User;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-@Database(entities = {Type.class, Beverage.class, Cart.class, CartDetail.class, Favorite.class, Order.class, OrderDetail.class},
+@Database(entities = {Type.class, Beverage.class, Cart.class, CartDetail.class, Favorite.class, Order.class, OrderDetail.class, Comment.class, User.class},
         version = 1,
         exportSchema = true // set true to be able to use automated migration in the future updates
         )
-@TypeConverters( BeverageAndTypeConverter.class)
+//@TypeConverters( BeverageAndTypeConverter.class)
 public abstract  class AppDatabase extends RoomDatabase{
     private static volatile AppDatabase sInstance;
     private static final int NUMBER_OF_THREADS = 4;
@@ -52,6 +51,8 @@ public abstract  class AppDatabase extends RoomDatabase{
     public abstract OrderDetailDAO orderDetailDAO();
     public abstract OrderDAO orderDAO();
     public abstract OrderDetailAndBeverageDAO orderDetailAndBeverageDAO();
+    public abstract CommentDAO commentDAO();
+    public abstract UserDAO userDAO();
 
     public static AppDatabase getDatabase(Context context){
         if(sInstance == null){

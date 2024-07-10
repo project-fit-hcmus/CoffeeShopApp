@@ -80,9 +80,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
             }
         });
 
-//        holder.name.setText(item.beverage.getBeverageName());
         holder.name.setText(item.beverage.getBeverageName());
-//        holder.price.setText(item.beverage.getBeverageCost());
         holder.price.setText(item.beverage.getBeverageCost());
         holder.type.setText(item.type.getTypeName());
 

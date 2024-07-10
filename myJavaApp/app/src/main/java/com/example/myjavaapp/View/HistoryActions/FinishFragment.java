@@ -1,14 +1,12 @@
 package com.example.myjavaapp.View.HistoryActions;
 
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,16 +19,18 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myjavaapp.Model.LocalViewModel.LocalCommentViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalODAndBEViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalOrderViewModel;
+import com.example.myjavaapp.Model.entity.Comment;
 import com.example.myjavaapp.Model.entity.Order;
 import com.example.myjavaapp.Model.entity.OrderDetailAndBeverage;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.Interfaces.OrderItemClickListener;
+import com.example.myjavaapp.View.ReviewActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.io.FileInputStream;
 import java.util.List;
 
 public class FinishFragment extends Fragment implements OrderItemClickListener {
@@ -38,17 +38,19 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
     private FirebaseUser user;
     private LocalOrderViewModel orderViewModel;
     private LocalODAndBEViewModel ODAndBeViewModel;
+    private static final int INTENT_REVIEW_ACTIVITY = 121212;
+    private LocalCommentViewModel commentViewModel;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.single_history_order_screen, container,false);
-        Toast.makeText(getContext(),"Finish Screen",Toast.LENGTH_SHORT).show();
         recyclerView = view.findViewById(R.id.historyRecyclerView);
         user = FirebaseAuth.getInstance().getCurrentUser();
         orderViewModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(LocalOrderViewModel.class);
         ODAndBeViewModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(LocalODAndBEViewModel.class);
+        commentViewModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(LocalCommentViewModel.class);
 
         orderViewModel.getAllOrderBaseOnStatus(user.getUid(), "Finish").observe(getViewLifecycleOwner(), new Observer<List<Order>>() {
             @Override
@@ -67,30 +69,55 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
     @Override
     public void OnClickListener(String orderId) {
         RecyclerView recyclerViewDialog;
-        Button btnExit, btnPurchase;
+        Button  btnPurchase, btnReview;
+        ImageButton btnExit;
         // show dialog
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         View view = LayoutInflater.from(getContext()).inflate(R.layout.history_order_dialog, (ViewGroup)getView(), false);
         recyclerViewDialog = view.findViewById(R.id.recyclerViewDialog);
         btnExit = view.findViewById(R.id.btnExit);
         btnPurchase = view.findViewById(R.id.btnPurchase);
+        btnReview = view.findViewById(R.id.btnReview);
         ODAndBeViewModel.getAllItemsInOrder(orderId).observe(getViewLifecycleOwner(), new Observer<List<OrderDetailAndBeverage>>() {
             @Override
             public void onChanged(List<OrderDetailAndBeverage> orderDetailAndBeverages) {
                 if(orderDetailAndBeverages != null && orderDetailAndBeverages.isEmpty())
                     return;
-                Toast.makeText(getContext(),String.valueOf(orderDetailAndBeverages.size()),Toast.LENGTH_SHORT).show();
                 SingleBeverageAdapter adapter = new SingleBeverageAdapter(getContext(), orderDetailAndBeverages);
                 recyclerViewDialog.setAdapter(adapter);
                 recyclerViewDialog.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
             }
         });
 
+        commentViewModel.getCommentOfOrder(orderId).observe(getViewLifecycleOwner(), new Observer<Comment>() {
+            @Override
+            public void onChanged(Comment comment) {
+                if(comment != null) {
+                    btnReview.setClickable(false);
+                    btnReview.setBackground(getResources().getDrawable(R.drawable.botron_button_unclick));
+                }
+                else{
+                    btnReview.setClickable(true);
+                    btnReview.setBackground(getResources().getDrawable(R.drawable.botron_button));
+                }
+            }
+        });
 
-        btnExit.setOnClickListener(new View.OnClickListener() {
+        btnReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.setCancelable(true);         // ERROR
+                Intent intent = new Intent(getContext(), ReviewActivity.class);
+                Bundle data = new Bundle();
+                data.putString("orderId",orderId);
+                intent.putExtras(data);
+                startActivityForResult(intent,INTENT_REVIEW_ACTIVITY);
+            }
+        });
+
+        btnExit.setOnClickListener(new View.OnClickListener() {     //ERROR
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -98,5 +125,6 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
         dialog.show();
 
     }
+
 
 }

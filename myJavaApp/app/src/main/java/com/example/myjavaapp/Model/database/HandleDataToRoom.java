@@ -14,24 +14,30 @@ import com.example.myjavaapp.Model.LocalViewModel.LocalFavoriteViewModel;
 import com.example.myjavaapp.Model.dao.BeverageDAO;
 import com.example.myjavaapp.Model.dao.CartDAO;
 import com.example.myjavaapp.Model.dao.CartDetailDAO;
+import com.example.myjavaapp.Model.dao.CommentDAO;
 import com.example.myjavaapp.Model.dao.FavoriteDAO;
 import com.example.myjavaapp.Model.dao.OrderDAO;
 import com.example.myjavaapp.Model.dao.OrderDetailDAO;
 import com.example.myjavaapp.Model.dao.TypeDAO;
+import com.example.myjavaapp.Model.dao.UserDAO;
 import com.example.myjavaapp.Model.entity.Beverage;
 import com.example.myjavaapp.Model.entity.Cart;
 import com.example.myjavaapp.Model.entity.CartDetail;
+import com.example.myjavaapp.Model.entity.Comment;
 import com.example.myjavaapp.Model.entity.Favorite;
 import com.example.myjavaapp.Model.entity.Order;
 import com.example.myjavaapp.Model.entity.OrderDetail;
 import com.example.myjavaapp.Model.entity.Type;
+import com.example.myjavaapp.Model.entity.User;
 import com.example.myjavaapp.ViewModel.BeverageViewModel;
 import com.example.myjavaapp.ViewModel.CartDetailViewModel;
 import com.example.myjavaapp.ViewModel.CartViewModel;
+import com.example.myjavaapp.ViewModel.CommentViewModel;
 import com.example.myjavaapp.ViewModel.FavoriteViewModel;
 import com.example.myjavaapp.ViewModel.OrderDetailViewModel;
 import com.example.myjavaapp.ViewModel.OrderViewModel;
 import com.example.myjavaapp.ViewModel.TypeViewModel;
+import com.example.myjavaapp.ViewModel.UserViewModel;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
@@ -184,7 +190,7 @@ public class HandleDataToRoom {
                 if(dataSnapshot != null){
                     for(DataSnapshot i : dataSnapshot.getChildren()){
                         if(i.child("orderUser").getValue(String.class).contains(id))
-                            temp.add(new Order(i.child("orderId").getValue(String.class),i.child("orderUser").getValue(String.class),i.child("orderPhone").getValue(String.class),i.child("orderNote").getValue(String.class), i.child("orderAddress").getValue(String.class),i.child("orderCost").getValue(Integer.class),i.child("orderStatus").getValue(String.class),i.child("orderDate").getValue(String.class),i.child("orderOveralImage").getValue(String.class)));
+                            temp.add(new Order(i.child("orderId").getValue(String.class),i.child("orderUser").getValue(String.class),i.child("orderPhone").getValue(String.class),i.child("orderNote").getValue(String.class), i.child("orderAddress").getValue(String.class),i.child("orderCost").getValue(Integer.class),i.child("orderStatus").getValue(String.class),i.child("orderDate").getValue(String.class),i.child("orderOveralImage").getValue(String.class), i.child("isRating").getValue(Boolean.class), i.child("orderCover").getValue(String.class)));
                         Log.d("AFTER READ FAVORITE", String.valueOf(temp.size()));
                     }
                     new Thread(new Runnable() {
@@ -215,6 +221,54 @@ public class HandleDataToRoom {
                         @Override
                         public void run() {
                             orderDetailDAO.insertAll(temp);
+                        }
+                    }).start();
+                }
+            }
+        });
+    }
+
+    public void getAllComment(){
+        CommentViewModel commentViewModel = new ViewModelProvider((ViewModelStoreOwner) mainCtx).get(CommentViewModel.class);
+        LiveData<DataSnapshot> liveData = commentViewModel.getDataSnapshotLiveData();
+        List<Comment> temp = new ArrayList<>();
+        CommentDAO commentDAO = AppDatabase.getDatabase(mainCtx).commentDAO();
+        liveData.observe((LifecycleOwner) mainCtx, new Observer<DataSnapshot>() {
+            @Override
+            public void onChanged(DataSnapshot dataSnapshot) {
+                if(dataSnapshot != null){
+                    for(DataSnapshot i : dataSnapshot.getChildren()){
+                        temp.add(new Comment(i.child("commentId").getValue(String.class), i.child("commentUser").getValue(String.class), i.child("commentOrder").getValue(String.class), i.child("commentContent").getValue(String.class), i.child("commentRating").getValue(float.class), i.child("commentTimestamp").getValue(String.class)));
+                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            commentDAO.insertAll(temp);
+                        }
+                    }).start();
+                }
+            }
+        });
+
+    }
+
+    public void getUser(String id){
+        UserViewModel userViewModel = new ViewModelProvider((ViewModelStoreOwner) mainCtx).get(UserViewModel.class);
+        LiveData<DataSnapshot> liveData = userViewModel.getDataSnapshotLiveData();
+        List<User> temp = new ArrayList<>();
+        UserDAO userDAO = AppDatabase.getDatabase(mainCtx).userDAO();
+        liveData.observe((LifecycleOwner) mainCtx, new Observer<DataSnapshot>() {
+            @Override
+            public void onChanged(DataSnapshot dataSnapshot) {
+                if(dataSnapshot != null){
+                    for(DataSnapshot i : dataSnapshot.getChildren()){
+//                        if(i.child("userId").equals(id))
+                            temp.add(new User(i.child("userId").getValue(String.class), i.child("userName").getValue(String.class), i.child("userEmail").getValue(String.class), i.child("userPhone").getValue(String.class), i.child("userLocation").getValue(String.class), i.child("userLatitude").getValue(Double.class), i.child("userLongitude").getValue(Double.class)));
+                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            userDAO.insertAll(temp);
                         }
                     }).start();
                 }

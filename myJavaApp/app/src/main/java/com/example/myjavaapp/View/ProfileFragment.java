@@ -15,7 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
+import com.example.myjavaapp.Model.LocalViewModel.LocalUserViewModel;
+import com.example.myjavaapp.Model.entity.User;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.ProfileAction.ChangePasswordActivity;
 import com.example.myjavaapp.View.ProfileAction.EditAccountActivity;
@@ -46,6 +51,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private static final int PAYMENT_METHOD_ACTION = 11115;
     private static final int POLICY_ACTION = 11116;
     private TextView userPhoneNumber, userLocation;
+    private LocalUserViewModel userViewModel;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,20 +84,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         txtEmail.setText(user.getEmail());
 
         // đọc và hiển thị thông tin số điện thoại/địa chỉ của người dùng
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
-        userRef.addValueEventListener(new ValueEventListener() {
+        userViewModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(LocalUserViewModel.class);
+        userViewModel.getUserWithId(user.getUid()).observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String phone = snapshot.child("phoneNumber").getValue(String.class);
-                String location = snapshot.child("location").getValue(String.class);
-                userPhoneNumber.setText(phone);
-                userLocation.setText(location);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+            public void onChanged(User us) {
+                if(us == null)
+                    return;
+                userPhoneNumber.setText(us.getUserPhone());
+                userLocation.setText(us.getUserLocation());
             }
         });
         btnLogout.setOnClickListener(this);
@@ -114,7 +114,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             editor.remove("isLogin"); // Xóa giá trị "isLogin"
             editor.apply();
             startActivityForResult(new Intent(getContext(), LoginActivity.class), LOGOUT_ACTION);
-
+            FirebaseAuth.getInstance().signOut();
 
         }
         if(v.getId() == R.id.btnEditAccount){

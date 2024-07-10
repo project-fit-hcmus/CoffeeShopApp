@@ -24,9 +24,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myjavaapp.Model.LocalViewModel.LocalBeAndCartDetailViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
+import com.example.myjavaapp.Model.LocalViewModel.LocalUserViewModel;
 import com.example.myjavaapp.Model.entity.BeverageAndCartDetail;
 import com.example.myjavaapp.Model.entity.Order;
 import com.example.myjavaapp.Model.entity.OrderDetail;
+import com.example.myjavaapp.Model.entity.User;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.Adapter.BookingItemAdapter;
 import com.example.myjavaapp.View.ProfileAction.ChooseLocationActivity;
@@ -59,6 +61,8 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
     private FirebaseUser user;
     private LocalBeAndCartDetailViewModel beAndCartDetailViewModel;
     private LocalCartDetailViewModel cartDetailViewModel;
+    private LocalUserViewModel userViewModel;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +90,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
 
         beAndCartDetailViewModel = new ViewModelProvider(this).get(LocalBeAndCartDetailViewModel.class);
         cartDetailViewModel = new ViewModelProvider(this).get(LocalCartDetailViewModel.class);
+        userViewModel = new ViewModelProvider(this).get(LocalUserViewModel.class);
         LiveData<List<BeverageAndCartDetail>> live = beAndCartDetailViewModel.getBeverageInCartDetail(user.getUid());
         live.observe(this, new Observer<List<BeverageAndCartDetail>>() {
             @Override
@@ -134,29 +139,25 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             startActivityForResult(new Intent(BookingActivity.this,ChooseLocationActivity.class),CHOOSE_ADDRESS_REQUEST);
         }
         if(v.getId() == R.id.btnAutoFill){
-            // đọc data trong realtime để hiển thị
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
-            ref.addValueEventListener(new ValueEventListener() {
+            userViewModel.getUserWithId(user.getUid()).observe(BookingActivity.this, new Observer<User>() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    String phone = snapshot.child("phoneNumber").getValue(String.class);
-                    String address = snapshot.child("location").getValue(String.class);
-                    txtAddr.setText(address);
-                    edtPhone.setText(phone);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
+                public void onChanged(User us) {
+                    if(us != null){
+                        txtAddr.setText(us.getUserLocation());
+                        edtPhone.setText(us.getUserPhone());
+                    }
                 }
             });
+
+
         }
         if(v.getId() == R.id.btnConfirm){
 
             // create new order
             String orderId = randomId();
 
-            Order order = new Order(orderId, user.getUid(),edtPhone.getText().toString(),edtNote.getText().toString(),txtAddr.getText().toString(),Integer.parseInt(txtTotalCost.getText().toString().substring(0,txtTotalCost.getText().toString().indexOf("$"))),"Delivering",getCurrentDate(),adapter.getData().get(0).beverage.getBeverageImage());
+
+            Order order = new Order(orderId, user.getUid(),edtPhone.getText().toString(),edtNote.getText().toString(),txtAddr.getText().toString(),Integer.parseInt(txtTotalCost.getText().toString().substring(0,txtTotalCost.getText().toString().indexOf("$"))),"Delivering",getCurrentDate(),adapter.getData().get(0).beverage.getBeverageImage(),false,adapter.getData().get(0).beverage.getBeverageImage() );
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders");
             ref.child(orderId).setValue(order);
             //create order detail

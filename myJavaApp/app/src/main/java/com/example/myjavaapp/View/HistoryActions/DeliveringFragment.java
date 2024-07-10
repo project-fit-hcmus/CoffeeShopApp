@@ -1,10 +1,12 @@
 package com.example.myjavaapp.View.HistoryActions;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -64,34 +66,44 @@ public class DeliveringFragment extends Fragment implements OrderItemClickListen
     public void OnClickListener(String orderId) {
         //show dialog
         RecyclerView recyclerViewDialog;
-        Button btnExit, btnPurchase;
+        Button btnPurchase, btnReview;
+        ImageButton btnExit;
         // show dialog
+
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         View view = LayoutInflater.from(getContext()).inflate(R.layout.history_order_dialog, (ViewGroup)getView(), false);
         recyclerViewDialog = view.findViewById(R.id.recyclerViewDialog);
         btnExit = view.findViewById(R.id.btnExit);
         btnPurchase = view.findViewById(R.id.btnPurchase);
+        btnReview = view.findViewById(R.id.btnReview);
         ODAndBeViewModel.getAllItemsInOrder(orderId).observe(getViewLifecycleOwner(), new Observer<List<OrderDetailAndBeverage>>() {
             @Override
             public void onChanged(List<OrderDetailAndBeverage> orderDetailAndBeverages) {
                 if(orderDetailAndBeverages != null && orderDetailAndBeverages.isEmpty())
                     return;
-                Toast.makeText(getContext(),String.valueOf(orderDetailAndBeverages.size()),Toast.LENGTH_SHORT).show();
                 SingleBeverageAdapter adapter = new SingleBeverageAdapter(getContext(), orderDetailAndBeverages);
                 recyclerViewDialog.setAdapter(adapter);
                 recyclerViewDialog.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
             }
         });
 
+        btnReview.setClickable(false);
+        btnReview.setBackground(getResources().getDrawable(R.drawable.botron_button_unclick));
 
-        btnExit.setOnClickListener(new View.OnClickListener() {
+        dialog.setView(view);
+        AlertDialog alert = dialog.create();
+        btnExit.setOnClickListener(new View.OnClickListener() {         //ERROR
             @Override
             public void onClick(View v) {
-                dialog.setCancelable(true);         // ERROR
+            }
+        });
+        btnReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
             }
         });
 
-        dialog.setView(view);
         dialog.show();
     }
 }

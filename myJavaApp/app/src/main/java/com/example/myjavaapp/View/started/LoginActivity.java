@@ -14,13 +14,17 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.myjavaapp.Model.User;
 import com.example.myjavaapp.Model.entity.Cart;
-//import com.example.myjavaapp.View.homeActivity;
+import com.example.myjavaapp.Model.entity.User;
 import com.example.myjavaapp.View.mainActivity;
+import com.facebook.AccessToken;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.Login;
+import com.facebook.login.LoginResult;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,6 +54,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
@@ -80,6 +85,12 @@ public class LoginActivity extends AppCompatActivity {
         txtPassword = (TextInputEditText) findViewById(R.id.txtPassword);
         btnLogin = (AppCompatButton) findViewById(R.id.btnLogin);
         txtRegister = (TextView) findViewById(R.id.txtRegister);
+        btnGoogle = (SignInButton) findViewById(R.id.btnGoogle);
+        btnFacebook = (LoginButton) findViewById(R.id.btnFacebook);
+
+
+
+
         spannableString = new SpannableString("Didn't have account? Register here");
         clickableSpan = new ClickableSpan() {
             @Override
@@ -99,8 +110,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // kiểm tra xem email và password có rỗng không
                 if(txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()){
-                    Snackbar.make(btnLogin,"Please enter Pasword and Email!!!",Snackbar.LENGTH_SHORT).show();
-//                    Toast.makeText(LoginActivity.this,"Please enter Password and Email!!!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"Please enter Password and Email!!!",Toast.LENGTH_SHORT).show();
                 }
                 else{
                     //sign in
@@ -108,7 +118,10 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-        // google login
+
+        // GOOGLE LOGIN
+        // delete sign in cache(only apply for google sign in)
+        DeleteCache();
         //tạo thực thể yêu cầu đăng nhập bằng google
         GoogleSignInOptions gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -116,17 +129,39 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        btnGoogle = (SignInButton) findViewById(R.id.btnGoogle);
         btnGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = googleSignInClient.getSignInIntent();
                 startActivityForResult(intent,RC_SIGN_IN);
+                Log.d("LOGIN ACTIVITY","google login");
+            }
+        });
+
+
+        // FACEBOOK LOGIN
+        FirebaseAuth.getInstance().signOut();
+        callbackManager = CallbackManager.Factory.create();
+        btnFacebook.setReadPermissions("email","public_profile");
+        btnFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "Facebook: onSuccess" + loginResult);
+                handleFaceBookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "Facebook: onCancel");
+            }
+
+            @Override
+            public void onError(@NonNull FacebookException e) {
+                Log.d(TAG, "Facebook: onError " + e.getMessage() );
             }
         });
 
     }
-
 
 
     @Override
@@ -135,8 +170,10 @@ public class LoginActivity extends AppCompatActivity {
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if(account != null)
-            Toast.makeText(LoginActivity.this,"Already login!!!",Toast.LENGTH_SHORT).show();
+        if(account != null) {
+            Toast.makeText(LoginActivity.this, "Already login!!!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     //login with email và password
@@ -154,8 +191,7 @@ public class LoginActivity extends AppCompatActivity {
                 else{
                     //trường hợp thông tin đăng nhập không hợp lệ
                     Log.d(TAG,"FAILED: SingInWithEmailAndPassword");
-                    Snackbar.make(btnLogin,"Email or Password may be wrong!!!",Snackbar.LENGTH_SHORT).show();
-//                    Toast.makeText(LoginActivity.this,"Email or Password may be wrong!!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"Email or Password may be wrong!!",Toast.LENGTH_SHORT).show();
                     updateUI(null);
                 }
             }
@@ -167,10 +203,7 @@ public class LoginActivity extends AppCompatActivity {
             txtPassword.setText("");
             txtEmail.setText("");
         }else{
-            //move to home screen
-//            Intent intent = new Intent(LoginActivity.this, homeActivity.class);
             Intent intent = new Intent(LoginActivity.this, mainActivity.class);
-
             startActivity(intent);
         }
     }
@@ -202,14 +235,12 @@ public class LoginActivity extends AppCompatActivity {
             String idToken = account.getIdToken();
             String name = account.getDisplayName();
             String email = account.getEmail();
-
+            Log.d("LOGIN ACTIVITY - name",name);
+            Log.d("LOGIN ACTIVITY - email", email);
+            Log.d("LOGIN ACTIVITY - id token", idToken);
             CreadentialWithGoogleInfo(idToken);
 
-//            Intent intent= new Intent(LoginActivity.this, homeActivity.class);
-            Intent intent= new Intent(LoginActivity.this, mainActivity.class);
 
-            // Signed in successfully, show authenticated UI.
-            startActivity(intent);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -221,21 +252,28 @@ public class LoginActivity extends AppCompatActivity {
     //xác thực thông tin người dùng với IdToken từ Google
     public void CreadentialWithGoogleInfo(String idToken){
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken,null);
+        Log.d("LOGIN ACTIVITY - credential with gg", "START");
 
         FirebaseAuth.getInstance().signInWithCredential(credential).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("FAILED LOGIN WITH GG"," Signin with credential google");
+                Log.d("FAILED LOGIN WITH GG"," Signin with credential google" + e.getMessage());
                 Toast.makeText(LoginActivity.this,"FAILED: Signin with credential google",Toast.LENGTH_SHORT).show();
             }
-        }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+        }).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
-            public void onSuccess(AuthResult authResult) {
-                Log.d("SUCCESS LOG IN WITH GG","Signin with credential google");
-                saveToRealtimeDatabase();
-                Toast.makeText(LoginActivity.this,"SUCCESS: Signin with credential google",Toast.LENGTH_SHORT).show();
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    Log.d("SUCCESS LOG IN WITH GG","Signin with credential google");
+                    saveToRealtimeDatabase();
+                    Toast.makeText(LoginActivity.this,"SUCCESS: Signin with credential google",Toast.LENGTH_SHORT).show();
 
-
+                    // Signed in successfully, show authenticated UI.
+                    Intent intent= new Intent(LoginActivity.this, mainActivity.class);
+                    startActivity(intent);
+                }else{
+                    Log.d("FAILED LOGIN WITH GG"," Signin with credential google");
+                }
             }
         });
     }
@@ -246,62 +284,80 @@ public class LoginActivity extends AppCompatActivity {
 
         FirebaseUser acc = FirebaseAuth.getInstance().getCurrentUser();
         if (acc != null) {
-            User userData = new User();
-            userData.setUsername(acc.getDisplayName());
-            userData.setPhone("");
-            userData.setEmail(acc.getEmail());
-            userData.setLocation("");
-            userData.setLatitude(0f);
-            userData.setLongtitude(0f);
+            User userData = new User(acc.getUid(), acc.getDisplayName(), acc.getEmail(), "","",0,0);
+            Log.d("SAVE DATA USER",acc.getUid());
+            Log.d("SAVE DATA USER",acc.getEmail());
+            Log.d("SAVE DATA USER",acc.getDisplayName());
 
             // user cart infomation
-            Cart userCart = new Cart();
             String id = randomGenerator();
-            userCart.setCartId(id);
-            userCart.setCartUser(acc.getUid());
+            Cart userCart = new Cart(id, acc.getUid());
 
             // kiểm tra xem userId đã tồn tại trong realtime firebase hay chưa?
-            if(!checkExistInRealtime(acc.getUid())){
-                FirebaseDatabase.getInstance().getReference("users")
-                        .child(acc.getUid()).setValue(userData);
-                FirebaseDatabase.getInstance().getReference("carts")
-                        .child(id).setValue(userCart);
-            }
-            else{
-            }
+            checkExistInRealtime(acc.getUid(), new ExistCallback() {
+                @Override
+                public void onResult(boolean exist) {
+                    if(!exist){
+                        Log.d("CHECK EXISTS","FALSE");
+                        FirebaseDatabase.getInstance().getReference("users")
+                                .child(acc.getUid()).setValue(userData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Log.d("ADD TO DATABASE REALTIME","SUCCESS");
+                                        }
+                                        else{
+                                            Log.d("ADD TO DATABASE REALTIME","FAILED");
+                                        }
+                                    }
+                                });
+                        FirebaseDatabase.getInstance().getReference("carts")
+                                .child(id).setValue(userCart);
+                        Log.d("SAVE DATA USER", "user IS NOT EXISTS");
+                    }else{
+                        Log.d("CHECK EXISTS","TRUE");
+                        Log.d("SAVE DATA USER","user IS EXISTS");
+                    }
+                }
+            });
+
 
 
         }
         else{
-            Toast.makeText(LoginActivity.this,"FAILED: User is null!!",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(LoginActivity.this,"FAILED: User is null!!",Toast.LENGTH_SHORT).show();
+            Log.d("SAVE DATA USER","user is null");
         }
     }
 
-    public boolean checkExistInRealtime(String key){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
-        final boolean[] result = {false};
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            public boolean check = false;
+    public interface ExistCallback{
+        void onResult(boolean exist);
+    }
+
+    public void checkExistInRealtime(String key, ExistCallback callback){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(key);
+        Log.d("CHECK EXIST IN REALTIME", key);
+//        Query query = ref.orderByChild("userId").equalTo(key);
+        Query query = ref.limitToFirst(1);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.hasChild(key)){
-                    check = true;
-                    result[0] = true;
+                if(snapshot.exists()){
+                    Toast.makeText(LoginActivity.this,"EXISTS", Toast.LENGTH_SHORT).show();
+                    callback.onResult(true);
                 }
                 else{
-                    check = false;
-                    result[0] = false;
+                    Toast.makeText(LoginActivity.this,"NOT EXISTS", Toast.LENGTH_SHORT).show();
+                    callback.onResult(false);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(LoginActivity.this,"ERROR: Lỗi truy vấn dữ liệu",Toast.LENGTH_SHORT).show();
 
             }
-
         });
-        return result[0];
+
     }
 
     public static String randomGenerator(){
@@ -319,140 +375,41 @@ public class LoginActivity extends AppCompatActivity {
         }
         return strBuilder.toString();
     }
+
+    public void DeleteCache(){
+        GoogleSignInClient signInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
+        //sign out for current account
+        signInClient.signOut();
+        //delete log in information former
+        signInClient.revokeAccess();
+    }
+
+
+    private void handleFaceBookAccessToken(AccessToken token){
+        Log.d(TAG, "handle facebook Access token : " + token);
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        Log.d(TAG, "get Token" + token.getToken());
+        Log.d(TAG, "handle facebook create credential: "  + credential);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Log.d(TAG,"signInWithCredential: Success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            saveToRealtimeDatabase();
+                            Intent intent= new Intent(LoginActivity.this, mainActivity.class);
+                            startActivity(intent);
+                        }else{
+                            Log.w(TAG,"SignInWithCredential : Failed");
+                            Log.w(TAG,"SignInWithCredential Error Detail: " + task.getException());
+                            Toast.makeText(LoginActivity.this,"Authentication failed",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
 }
 
 
 
-
-
-
-//problem key hash in authentication facebook: https://github.com/facebookarchive/react-native-fbsdk/issues/424
-
-
-/*
-        //login with facebook
-        printHashKey();
-        btnFacebook = (LoginButton) findViewById(R.id.btnFacebook);
-        callbackManager = CallbackManager.Factory.create();
-
-        //test
-        btnFacebook.setPermissions("email","public_profile");
-        btnFacebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG,"facebook login: Sucess" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d(TAG,"facebook login: Cancel" );
-
-            }
-
-            @Override
-            public void onError(@NonNull FacebookException e) {
-                Log.d(TAG,"facebook login: Error",e);
-
-
-            }
-        });
-
-        */
-
-//test
-
-//        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-//        if(accessToken != null && !accessToken.isExpired()){
-//            Intent intent = new Intent(LoginActivity.this, homeActivity.class);
-//            Bundle data = new Bundle();
-//            data.putString("type","another");
-//            intent.putExtras(data);
-//            startActivity(intent);
-//        }
-//        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-//            @Override
-//            public void onSuccess(LoginResult loginResult) {
-//                try {
-//                    PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
-//                    for (Signature signature : packageInfo.signatures) {
-//                        MessageDigest messageDigest = MessageDigest.getInstance("SHA");
-//                        messageDigest.update(signature.toByteArray());
-//                        String hashKey = Base64.encodeToString(messageDigest.digest(), Base64.DEFAULT);
-//                        Log.d("Hash Key", hashKey);
-//                        System.out.println(hashKey);
-//                    }
-//                } catch (PackageManager.NameNotFoundException e) {
-//                    e.printStackTrace();
-//                } catch (NoSuchAlgorithmException e) {
-//                    e.printStackTrace();
-//                }
-//                Intent intent = new Intent(LoginActivity.this, homeActivity.class);
-//                Bundle data = new Bundle();
-//                data.putString("type","another");
-//                intent.putExtras(data);
-//                startActivity(intent);
-//
-////                startActivity(new Intent(LoginActivity.this, homeActivity.class));
-//                finish();
-//            }
-//
-//            @Override
-//            public void onCancel() {
-//                Log.d("RESULT","CANCEL");
-//                System.out.println("CANCEL");
-//            }
-//
-//            @Override
-//            public void onError(@NonNull FacebookException e) {
-//                Log.d("RESULT","ERROR");
-//                System.out.println("ERROR");
-//            }
-//        });
-//
-//        btnFacebook.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile","email"));
-//            }
-//        });
-
-
-
- /*
-    // for facebook login (Failed - key hash does not match any stored key hashes)
-    public void handleFacebookAccessToken(AccessToken accessToken){
-        Log.d(TAG,"HandleFacebookAccessToken:  " + accessToken);
-        AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
-        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    //đăng nhập thành công bằng facebook
-                    Log.d(TAG,"LoginByFacebook:Success");
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    // xử lý updateUI( gửi intent tới với homeActivity
-                    Intent intent = new Intent(LoginActivity.this, homeActivity.class);
-                    startActivity(intent);
-                }else{
-                    //trường hợp đăng nhập bằng facebook thất bại
-                    Log.d(TAG,"LoginByFacebook:Failed");
-                    Toast.makeText(LoginActivity.this,"Something Wrong!!!",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    public void printHashKey(){
-        try{
-            PackageInfo info = getPackageManager().getPackageInfo("com.android.facebookloginsample",PackageManager.GET_SIGNATURES);
-            for (Signature signature: info.signatures){
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-//                Log.d("KeyHash:", Base64.getEncoder().encodeToString(md.digest(),Base64.DEFAULT));
-            }
-        }catch(PackageManager.NameNotFoundException e){
-        }catch(NoSuchAlgorithmException e){
-        }
-    }
-*/

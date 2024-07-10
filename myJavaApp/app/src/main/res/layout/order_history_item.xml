@@ -24,20 +24,21 @@
         android:layout_marginLeft="5dp"
         tools:ignore="MissingConstraints" >
         <TextView
-            android:layout_width="200dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:textColor="@color/color_1_first"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:text="Phú Mậu, Phú Vang District, Thua Thien Hue, Vietnam"
             android:id="@+id/address"/>
-        <View android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/light_gray"/>
+
         <TextView
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:id="@+id/status"
             android:layout_marginLeft="5dp"
-            android:textColor="@color/color_1_first"
+            android:textColor="@color/red"
+            android:textStyle="bold"
             android:text="Đã hoàn thành"/>
     </LinearLayout>
     <LinearLayout
@@ -50,7 +51,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="200dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
@@ -66,24 +67,23 @@
                 android:textColor="@color/color_1_first"
                 android:text="0796728944"/>
         </LinearLayout>
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/light_gray"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/cost"
-            android:textColor="@color/color_1_first"
+            android:textColor="@color/red"
             android:layout_marginLeft="5dp"
+            android:textStyle="bold"
             android:text="130$"/>
 
     </LinearLayout>
+
+
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/light_gray"
-        app:layout_constraintTop_toBottomOf="@id/group2"
+        app:layout_constraintTop_toBottomOf="@id/image"
         android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
 

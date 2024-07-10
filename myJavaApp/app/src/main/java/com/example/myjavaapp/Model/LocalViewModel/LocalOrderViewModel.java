@@ -23,4 +23,7 @@ public class LocalOrderViewModel extends AndroidViewModel {
     public LiveData<List<Order>> getAllOrderBaseOnStatus(String user, String status){
             return mRepository.getAllOrderBaseOnStatus(user,status);
     }
+    public LiveData<Order> getOrderItem(String id){
+            return mRepository.getOrderItem(id);
+    }
 }

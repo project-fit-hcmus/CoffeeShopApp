@@ -67,6 +67,7 @@
         <activity android:name=".View.PrivacyActivity" android:exported="true"/>
         <activity android:name=".View.BookingActivity" android:exported="true"/>
         <activity android:name=".View.OrderHistory" android:exported="true"/>
+        <activity android:name=".View.ReviewActivity" android:exported="true"/>
     </application>
 
 </manifest>

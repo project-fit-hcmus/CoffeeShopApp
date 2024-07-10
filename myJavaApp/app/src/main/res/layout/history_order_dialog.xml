@@ -3,47 +3,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:maxHeight="350dp"
+    android:maxHeight="390dp"
     android:background="@drawable/dialog_border"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/btnExit"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:src="@drawable/baseline_close_24"
+        android:background="@color/transparent"
+        />
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/recyclerViewDialog"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnExit"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/btnExit"
+        app:layout_constraintBottom_toTopOf="@+id/btnReview"
         tools:ignore="MissingConstraints" />
+
+
     <Button
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnExit"
-        android:text="Exit"
-        app:layout_constraintRight_toRightOf="parent"
-        android:background="@drawable/botron_button"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:stateListAnimator="@animator/button_animation"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="MissingConstraints" />
+    android:layout_width="120dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/btnReview"
+    android:text="Review"
+    app:layout_constraintRight_toRightOf="parent"
+    android:background="@drawable/botron_button"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:stateListAnimator="@animator/button_animation"
+    android:layout_marginRight="30dp"
+    android:layout_marginBottom="20dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    tools:ignore="MissingConstraints" />
     <Button
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnPurchase"
-        android:text="Purchase"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:background="@drawable/botron_button"
-        android:layout_marginLeft="30dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:stateListAnimator="@animator/button_animation"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="20dp"
-        tools:ignore="MissingConstraints" />
+    android:layout_width="120dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/btnPurchase"
+    android:text="Purchase"
+    app:layout_constraintLeft_toLeftOf="parent"
+    android:background="@drawable/botron_button"
+    android:layout_marginLeft="30dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:stateListAnimator="@animator/button_animation"
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:layout_marginBottom="20dp"
+    tools:ignore="MissingConstraints" />
+
 
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

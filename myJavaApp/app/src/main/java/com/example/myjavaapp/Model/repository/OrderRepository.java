@@ -30,4 +30,7 @@ public class OrderRepository {
         return orderDAO.getAllOrderBaseOnStatus(user,status);
     }
 
+    public LiveData<Order> getOrderItem(String id){
+        return orderDAO.getOrer(id);
+    }
 }

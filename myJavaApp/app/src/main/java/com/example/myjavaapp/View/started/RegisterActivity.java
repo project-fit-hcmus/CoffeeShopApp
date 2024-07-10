@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.example.myjavaapp.Model.User;
+import com.example.myjavaapp.Model.entity.User;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.Model.entity.Cart;
 import com.facebook.CallbackManager;
@@ -150,12 +150,12 @@ public class RegisterActivity extends AppCompatActivity {
         FirebaseUser acc = FirebaseAuth.getInstance().getCurrentUser();
         if (acc != null) {
             User userData = new User();
-            userData.setUsername("");
-            userData.setPhone("");
-            userData.setEmail(acc.getEmail());
-            userData.setLocation("");
-            userData.setLongtitude(0f);
-            userData.setLatitude(0f);
+            userData.setUserName("");
+            userData.setUserPhone("");
+            userData.setUserEmail(acc.getEmail());
+            userData.setUserLocation("");
+            userData.setUserLongitude(0f);
+            userData.setUserLatitude(0f);
             FirebaseDatabase.getInstance().getReference("users")
                     .child(acc.getUid()).setValue(userData);
             Toast.makeText(RegisterActivity.this,"SUCCESS: User is NOT null!!",Toast.LENGTH_SHORT).show();

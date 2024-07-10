@@ -19,4 +19,6 @@ public interface OrderDAO {
 
     @Query("SELECT * FROM `Order` WHERE orderUser = :user AND orderStatus = :status")
     public LiveData<List<Order>> getAllOrderBaseOnStatus(String user, String status);
+    @Query("SELECT * FROM `Order` WHERE orderId = :id")
+    public LiveData<Order> getOrer(String id);
 }

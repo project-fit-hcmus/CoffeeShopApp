@@ -1,5 +1,6 @@
 package com.example.myjavaapp.View;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,12 +14,20 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.HistoryActions.ViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class OrderHistory extends AppCompatActivity implements View.OnClickListener{
     private ImageView imgBack;
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private ViewPagerAdapter viewPagerAdapter;
+    private CircleImageView userAvatar;
+    private FirebaseUser user;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +36,13 @@ public class OrderHistory extends AppCompatActivity implements View.OnClickListe
         imgBack = findViewById(R.id.logo);
         tabLayout = findViewById(R.id.historyTabs);
         viewPager2 =  findViewById(R.id.historyViewPager);
+        userAvatar = findViewById(R.id.userImg);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        Uri photo = user.getPhotoUrl();
+        if(photo != null){
+            Picasso.get().load(photo).into(userAvatar);
+        }
 
         viewPagerAdapter = new ViewPagerAdapter(this);
         viewPager2.setAdapter(viewPagerAdapter);

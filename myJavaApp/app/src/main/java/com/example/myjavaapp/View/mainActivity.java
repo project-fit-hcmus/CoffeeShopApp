@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,28 +17,36 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalCartViewModel;
+import com.example.myjavaapp.Model.LocalViewModel.LocalODAndBEViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalOrderViewModel;
+import com.example.myjavaapp.Model.LocalViewModel.LocalUserViewModel;
 import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.database.HandleDataToRoom;
 import com.example.myjavaapp.Model.entity.Cart;
 import com.example.myjavaapp.Model.entity.CartDetail;
 import com.example.myjavaapp.Model.entity.CartDetailAndCart;
 import com.example.myjavaapp.Model.entity.Order;
+import com.example.myjavaapp.Model.entity.User;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.Adapter.ViewPagerAdapter;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
+import java.util.Random;
 
 
 public class mainActivity extends AppCompatActivity {
 
-    private FirebaseUser user;
+    private FirebaseUser account;
     private BottomNavigationView bottomNavigationView;
     private ViewPager viewPager;
 
@@ -45,24 +54,40 @@ public class mainActivity extends AppCompatActivity {
     private LocalCartViewModel cartViewModel;
     private LocalOrderViewModel orderViewModel;
     private LocalCartDetailViewModel cartDetailViewModel;
+    private LocalUserViewModel userViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_screen);
-        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        account = FirebaseAuth.getInstance().getCurrentUser();
+        Toast.makeText(mainActivity.this,account.getUid(),Toast.LENGTH_SHORT).show();
+        Log.d("MAIN ACTIVITY", account.getUid());
+        //         Lưu trạng thái đã đăng nhập của ngươi dùng
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isLogin",true);
+        editor.putString("UserId",account.getUid());
+        editor.apply();
+
+
         //get data from realtime firebase
         handleDataToRoom = new HandleDataToRoom(this);
         handleDataToRoom.getAllTypes();
         handleDataToRoom.getAllBeverage();
         handleDataToRoom.getAllCart();
         handleDataToRoom.getAllCartDetail();
-        handleDataToRoom.getAllFavoriteItems(user.getUid());
-        handleDataToRoom.getAllOrder(user.getUid());
+        handleDataToRoom.getAllFavoriteItems(account.getUid());
+        handleDataToRoom.getAllOrder(account.getUid());
         handleDataToRoom.getAllOrderDetail();
+        handleDataToRoom.getAllComment();
+        handleDataToRoom.getUser(account.getUid());
 
         cartViewModel = new ViewModelProvider(this).get(LocalCartViewModel.class);
         cartDetailViewModel = new ViewModelProvider(this).get(LocalCartDetailViewModel.class);
+        userViewModel = new ViewModelProvider(this).get(LocalUserViewModel.class);
+
 
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottomNav);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -88,15 +113,9 @@ public class mainActivity extends AppCompatActivity {
             }
         });
 
-//         Lưu trạng thái đã đăng nhập của ngươi dùng
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs",MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isLogin",true);
-        editor.putString("UserId",user.getUid());
-//        editor.putUri("UserAvatar",user.getPhotoUrl());
-        editor.apply();
 
-        cartViewModel.getCartIdFromUser(user.getUid()).observe(this, new Observer<String>() {
+
+        cartViewModel.getCartIdFromUser(account.getUid()).observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
                 editor.putString("CartUserId",s);
@@ -139,6 +158,20 @@ public class mainActivity extends AppCompatActivity {
 
             }
         });
-
+    }
+    public static String randomGenerator(){
+        String alphabet = "ABCDEFGHIJKLMNOPRSTUWXYZ";
+        String numbers = "1234567890";
+        Random random = new Random();
+        StringBuilder strBuilder = new StringBuilder();
+        for(int i = 0; i < 3; ++i){
+            int index = random.nextInt(alphabet.length());
+            strBuilder.append(alphabet.charAt(index));
+        }
+        for(int i = 0; i < 2; ++i){
+            int index = random.nextInt(numbers.length());
+            strBuilder.append(numbers.charAt(index));
+        }
+        return strBuilder.toString();
     }
 }

@@ -22,8 +22,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myjavaapp.Model.User;
+import com.example.myjavaapp.Model.LocalViewModel.LocalUserViewModel;
+import com.example.myjavaapp.Model.entity.User;
 import com.example.myjavaapp.R;
 //import com.example.myjavaapp.View.ProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -59,6 +62,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
     private double latitude = 0f;
     private double longitude = 0f;
     private Uri choosenPic = null;
+    private LocalUserViewModel userViewModel;
     //get image from user device
     private ActivityResultLauncher<PickVisualMediaRequest> launcher = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), new ActivityResultCallback<Uri>() {
         @Override
@@ -90,26 +94,21 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
         user = FirebaseAuth.getInstance().getCurrentUser();
         title.setText("Manage Account");
         txtUsername.setText(user.getDisplayName());
-        //get user information
-         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
-         userRef.addValueEventListener(new ValueEventListener() {
-             @Override
-             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                 String phone = snapshot.child("phoneNumber").getValue(String.class);
-                 String location = snapshot.child("location").getValue(String.class);
-                 String username = snapshot.child("username").getValue(String.class);
-                 txtUsername.setHint(username);
-                 txtPhoneNumber.setHint(phone);
-                 txtLocation.setText(location);
-             }
 
-             @Override
-             public void onCancelled(@NonNull DatabaseError error) {
+        userViewModel = new ViewModelProvider(this).get(LocalUserViewModel.class);
 
-             }
-         });
+        userViewModel.getUserWithId(user.getUid()).observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(User us) {
+                if(us != null) {
+                    txtUsername.setHint(us.getUserName());
+                    txtPhoneNumber.setHint(us.getUserPhone());
+                    txtLocation.setHint(us.getUserLocation());
+                }
+            }
+        });
 
-         Picasso.get().load(user.getPhotoUrl()).into(userImage);
+        Picasso.get().load(user.getPhotoUrl()).into(userImage);
 
         btnCancel.setOnClickListener(this);
         btnSave.setOnClickListener(this);
@@ -146,6 +145,7 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
                         .setDisplayName(txtUsername.getText().toString())
                         .build();
 
+            // update profile avatar
             user.updateProfile(change).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -163,38 +163,15 @@ public class EditAccountActivity extends AppCompatActivity implements View.OnCli
                 DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users");
                 DatabaseReference userRefId = userRef.child(user.getUid());
                 //update phonenumber
-                userRefId.addListenerForSingleValueEvent(new ValueEventListener() {
+                User us = new User(user.getUid(), user.getDisplayName(), user.getEmail(), txtPhoneNumber.getText().toString(), txtLocation.getText().toString(), latitude, longitude);
+                userRef.child(user.getUid()).setValue(us).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if(snapshot.exists()){
-                            User uInfo = snapshot.getValue(User.class);
-                            if(uInfo != null){
-                                uInfo.setPhone(txtPhoneNumber.getText().toString());
-                                uInfo.setUsername(txtUsername.getText().toString());
-                                if(latitude != 0f)
-                                    uInfo.setLatitude(latitude);
-                                if(longitude != 0f)
-                                    uInfo.setLongtitude(longitude);
-                                String addr = txtLocation.getText().toString();
-                                if(!addr.equals("Your Location"))
-                                    uInfo.setLocation(addr);
-                            }
-                            userRefId.setValue(uInfo);
-                            Log.d("Realtime","Update phone successful!!!");
-                        }
-                        else{
-                            Log.d("Realtime","User not found!!!");
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("firebase", "Error retrieving user information", error.toException());
+                    public void onComplete(@NonNull Task<Void> task) {
+                        userViewModel.update(us);
                     }
                 });
 
             }
-
 
             //trường hợp sau khi save thoát ra màn hình chính thì không cập nhập thông tin tức thời được
             setResult(RESULT_OK);
