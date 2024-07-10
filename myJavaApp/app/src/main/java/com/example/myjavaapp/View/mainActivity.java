@@ -1,5 +1,6 @@
 package com.example.myjavaapp.View;
 
+import android.Manifest;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -31,6 +33,7 @@ import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.Adapter.ViewPagerAdapter;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -49,6 +52,10 @@ public class mainActivity extends AppCompatActivity {
     private FirebaseUser account;
     private BottomNavigationView bottomNavigationView;
     private ViewPager viewPager;
+    private int REQUEST_CODE = 1133;
+    private int LOCATION_PERMISSION_REQUEST = 2;
+
+
 
     private HandleDataToRoom handleDataToRoom = new HandleDataToRoom(this);
     private LocalCartViewModel cartViewModel;
@@ -83,6 +90,13 @@ public class mainActivity extends AppCompatActivity {
         handleDataToRoom.getAllOrderDetail();
         handleDataToRoom.getAllComment();
         handleDataToRoom.getUser(account.getUid());
+
+
+        // Request Permissions
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},REQUEST_CODE);
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},LOCATION_PERMISSION_REQUEST);
+
+
 
         cartViewModel = new ViewModelProvider(this).get(LocalCartViewModel.class);
         cartDetailViewModel = new ViewModelProvider(this).get(LocalCartDetailViewModel.class);
