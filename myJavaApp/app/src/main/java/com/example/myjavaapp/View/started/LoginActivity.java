@@ -20,10 +20,8 @@ import com.example.myjavaapp.View.mainActivity;
 import com.facebook.AccessToken;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.login.Login;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -337,7 +335,6 @@ public class LoginActivity extends AppCompatActivity {
     public void checkExistInRealtime(String key, ExistCallback callback){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(key);
         Log.d("CHECK EXIST IN REALTIME", key);
-//        Query query = ref.orderByChild("userId").equalTo(key);
         Query query = ref.limitToFirst(1);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

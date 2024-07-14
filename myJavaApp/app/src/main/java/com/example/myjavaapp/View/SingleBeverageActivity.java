@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -26,33 +25,21 @@ import com.example.myjavaapp.Model.LocalViewModel.LocalBeverageViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalCartViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalFavoriteViewModel;
-import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.entity.Beverage;
 import com.example.myjavaapp.Model.entity.CartDetail;
 import com.example.myjavaapp.Model.entity.Favorite;
 import com.example.myjavaapp.R;
-import com.google.android.gms.common.data.DataBufferObserver;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.util.Executors;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
-
-import org.checkerframework.checker.units.qual.C;
-
 import java.util.List;
-import java.util.Observable;
-import java.util.concurrent.ExecutorService;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-import kotlinx.coroutines.CoroutineScope;
-import kotlinx.coroutines.Dispatchers;
-
 public class SingleBeverageActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView beverageIcon;
     private ImageButton btnBack, btnFavorite, btnAdd, btnSub;

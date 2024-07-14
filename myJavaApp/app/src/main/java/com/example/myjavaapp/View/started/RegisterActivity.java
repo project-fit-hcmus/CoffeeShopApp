@@ -114,10 +114,7 @@ public class RegisterActivity extends AppCompatActivity {
                     //sign in success, updated UI with user's information
                     Log.d("ADD ACCOUNT","createUserWithEmailAndPassword:Success");
                     FirebaseUser user=mAuth.getCurrentUser();
-
-                    //test
                     saveToRealtimeDatabase();
-                    //test
                     updateUI(user);
                 }
                 else{
@@ -143,7 +140,6 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    //test function
     public void saveToRealtimeDatabase(){
         Log.d("REGISTER: ", "enter save to realtime database");
 

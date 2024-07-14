@@ -26,7 +26,6 @@ import com.example.myjavaapp.Model.entity.Order;
 import com.example.myjavaapp.Model.entity.OrderDetailAndBeverage;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.Interfaces.OrderItemClickListener;
-import com.example.myjavaapp.View.RepurchaseActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

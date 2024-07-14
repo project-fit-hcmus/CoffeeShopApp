@@ -13,7 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -162,7 +161,7 @@ public class homeSingleCateScreen extends AppCompatActivity implements BeverageI
                     isExistsLive.removeObserver(this);
                 }else if(aBoolean == true){
                     Log.d("RESULT CHECK", "true");
-                    //update for cardetail
+                    //update for cartdetail
                     LiveData<Integer> quantityLive = AppDatabase.getDatabase(homeSingleCateScreen.this).cartDetailDAO().getQuantityOfCartDetail(cartId, id);
                     Observer<Integer> quantityObserver = new Observer<Integer>() {
                         @Override

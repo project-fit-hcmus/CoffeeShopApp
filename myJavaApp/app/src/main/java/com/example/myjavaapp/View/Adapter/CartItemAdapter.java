@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,9 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.example.myjavaapp.Model.entity.BeverageAndCartDetail;
 import com.example.myjavaapp.R;
-import com.example.myjavaapp.View.Interfaces.BeverageItemClickListener;
 import com.example.myjavaapp.View.Interfaces.CartItemClickListener;
-import com.example.myjavaapp.View.Interfaces.ItemClickListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
@@ -57,7 +54,6 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull CartItemAdapter.ViewHolder holder, int position) {
         BeverageAndCartDetail item = data.get(position);
-//        String name = item.beverage.getBeverageImage();
         String name = item.beverage.getBeverageImage();
 
         StorageReference storageReference = FirebaseStorage.getInstance().getReference("images/beverages/" + name);

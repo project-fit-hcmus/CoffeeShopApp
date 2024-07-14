@@ -19,7 +19,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -85,18 +84,6 @@ public class CartFragment extends Fragment implements CartItemClickListener, Vie
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyPrefs",Context.MODE_PRIVATE);
         String cartId = sharedPreferences.getString("CartUserId","");
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
-//        Toast.makeText(getContext(),"cart detail id: " + cartId, Toast.LENGTH_SHORT).show();
-//        cartDetailViewModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(LocalCartDetailViewModel.class);
-//        cartDetailViewModel.getAllDetailItemInCart(cartId).observe(getViewLifecycleOwner(), new Observer<List<CartDetail>>() {
-//            @Override
-//            public void onChanged(List<CartDetail> cartDetails) {
-//                if(cartDetails != null && cartDetails.isEmpty())
-//                    return;
-//                for(CartDetail i : cartDetails){
-//                    ref.child(i.getCartDetailId() + i.getCartDetailBeverage()).removeValue();
-//                }
-//            }
-//        });
 
         // fetch data
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -144,11 +131,7 @@ public class CartFragment extends Fragment implements CartItemClickListener, Vie
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("cartdetails");
 
-        if(number == 0) {            //ERROR
-//            ref.child(id + beverage).removeValue();
-//            cartDetailViewModel.deleteItemInCartDetail(beverage, id);
-
-//            updateInRealtime(id, beverage);
+        if(number == 0) {
             ref.child(id + beverage).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -161,7 +144,6 @@ public class CartFragment extends Fragment implements CartItemClickListener, Vie
                 }
             });
         }else{
-//            cartDetailViewModel.UpdateQuantityOfAnItem(number,id,beverage);
             ref.child(id + beverage).child("cartDetailQuantity").setValue(number).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {

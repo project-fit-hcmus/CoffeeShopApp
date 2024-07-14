@@ -1,6 +1,5 @@
 package com.example.myjavaapp.View.ProfileAction;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -12,24 +11,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.example.myjavaapp.R;
-//import com.example.myjavaapp.View.ProfileActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-//success
 public class ChangePasswordActivity extends AppCompatActivity implements View.OnClickListener {
     private TextInputEditText edtOldPass, edtNewPass, edtRepeat;
     private AppCompatButton btnSave, btnCancel, btnBack;
@@ -95,7 +88,6 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.btnBack){
-//            startActivity(new Intent(ChangePasswordActivity.this, ProfileActivity.class));
             setResult(RESULT_OK);
             finish();
 

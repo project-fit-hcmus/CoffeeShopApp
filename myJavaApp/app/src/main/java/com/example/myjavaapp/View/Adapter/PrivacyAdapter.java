@@ -36,7 +36,6 @@ public class PrivacyAdapter extends RecyclerView.Adapter<PrivacyAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-//        holder.image.setImageResource(images.get(position));
         holder.header.setText(headers.get(position));
         holder.content.setText(contents.get(position));
     }

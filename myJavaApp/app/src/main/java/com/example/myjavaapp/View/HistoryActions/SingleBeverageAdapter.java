@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
-import com.example.myjavaapp.Model.entity.OrderDetail;
 import com.example.myjavaapp.Model.entity.OrderDetailAndBeverage;
 import com.example.myjavaapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;

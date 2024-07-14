@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.example.myjavaapp.Model.entity.BeverageAndCartDetail;
 import com.example.myjavaapp.R;
-import com.example.myjavaapp.View.BookingActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;

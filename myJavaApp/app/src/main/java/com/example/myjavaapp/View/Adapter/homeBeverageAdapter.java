@@ -36,7 +36,6 @@ public class homeBeverageAdapter extends  RecyclerView.Adapter<homeBeverageAdapt
 
     public homeBeverageAdapter(Context main ){
         this.context = main;
-//        this.lstData = data;
     }
     public void setAdapterData(List<Beverage> data){
         this.lstData = data;

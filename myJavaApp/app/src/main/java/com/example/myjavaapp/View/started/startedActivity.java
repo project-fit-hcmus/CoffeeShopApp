@@ -11,7 +11,6 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.mainActivity;
-//import com.example.myjavaapp.View.homeActivity;
 
 public class startedActivity extends AppCompatActivity {
     private AppCompatButton btnStart;
@@ -23,7 +22,6 @@ public class startedActivity extends AppCompatActivity {
         boolean isLogin = sharedPreferences.getBoolean("isLogin",false);
         if (isLogin){
             //nguười dùng đã đăng nhập => chuyển tới màn hình home
-//            startActivity(new Intent(startedActivity.this, homeActivity.class));
             startActivity(new Intent(startedActivity.this, mainActivity.class));
 
         }else{

@@ -273,4 +273,3 @@ public class ChooseLocationActivity extends AppCompatActivity implements OnMapRe
     }
 }
 
-// lúc mở map lên không hiện vị trí hiện tại

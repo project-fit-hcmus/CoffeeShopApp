@@ -13,8 +13,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -22,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myjavaapp.Model.LocalViewModel.LocalBeverageViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
-import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.entity.Beverage;
 import com.example.myjavaapp.Model.entity.CartDetail;
 import com.example.myjavaapp.R;
@@ -34,7 +31,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
-import java.util.prefs.Preferences;
 
 public class SearchActivity extends AppCompatActivity implements BeverageItemClickListener {
     private EditText edtSearch;
@@ -76,11 +72,7 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
         beverageViewModel.findBeverageWithKeyword(factor).observe(this, new Observer<List<Beverage>>() {
             @Override
             public void onChanged(List<Beverage> beverages) {
-//                if(beverages != null && beverages.isEmpty()) {
-//                    Toast.makeText(SearchActivity.this, "IS EMPTY",Toast.LENGTH_SHORT).show();
-//                    adapter.setAdapterData(beverages);
-//                    recyclerView.getAdapter().notifyDataSetChanged();
-//                }
+
                 adapter.setAdapterData(beverages);
                 adapter.setItemClickListener(SearchActivity.this);
                 recyclerView.setAdapter(adapter);
@@ -112,10 +104,6 @@ public class SearchActivity extends AppCompatActivity implements BeverageItemCli
                     beverageViewModel.findBeverageWithKeyword(factor).observe(SearchActivity.this, new Observer<List<Beverage>>() {
                         @Override
                         public void onChanged(List<Beverage> beverages) {
-//                            if(beverages != null && beverages.isEmpty()) {
-//                                Toast.makeText(SearchActivity.this, "IS EMPTY",Toast.LENGTH_SHORT).show();
-//                                return;
-//                            }
                             adapter.setAdapterData(beverages);
                             adapter.setItemClickListener(SearchActivity.this);
                             recyclerView.setAdapter(adapter);

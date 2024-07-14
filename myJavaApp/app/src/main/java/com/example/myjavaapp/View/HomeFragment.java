@@ -31,7 +31,6 @@ import com.bumptech.glide.Glide;
 import com.example.myjavaapp.Model.LocalViewModel.LocalBeverageViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalCateViewModel;
-import com.example.myjavaapp.Model.dao.TypeDAO;
 import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.entity.Beverage;
 import com.example.myjavaapp.Model.entity.CartDetail;
@@ -43,7 +42,6 @@ import com.example.myjavaapp.View.Interfaces.BeverageItemClickListener;
 import com.example.myjavaapp.View.Interfaces.ItemClickListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -67,7 +65,6 @@ public class HomeFragment extends Fragment implements ItemClickListener, Beverag
     private LocalCateViewModel cateViewModel;
     private LocalBeverageViewModel beverageViewModel;
     private LocalCartDetailViewModel cartDetailViewModel;
-    private homeBeverageAdapter adapter ;
 
 
 

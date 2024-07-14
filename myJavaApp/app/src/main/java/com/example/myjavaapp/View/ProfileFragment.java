@@ -25,14 +25,8 @@ import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.ProfileAction.ChangePasswordActivity;
 import com.example.myjavaapp.View.ProfileAction.EditAccountActivity;
 import com.example.myjavaapp.View.started.LoginActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -78,7 +72,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             Picasso.get().load(photo).into(userAvatar);
         }
         else{
-//            Toast.makeText(ProfileActivity.this, "No photo profile", Toast.LENGTH_SHORT).show();
         }
         userName.setText(user.getDisplayName());
         txtEmail.setText(user.getEmail());

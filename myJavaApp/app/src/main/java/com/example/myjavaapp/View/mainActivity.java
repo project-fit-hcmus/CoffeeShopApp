@@ -12,38 +12,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.myjavaapp.Model.LocalViewModel.LocalCartDetailViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalCartViewModel;
-import com.example.myjavaapp.Model.LocalViewModel.LocalODAndBEViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalOrderViewModel;
 import com.example.myjavaapp.Model.LocalViewModel.LocalUserViewModel;
-import com.example.myjavaapp.Model.database.AppDatabase;
 import com.example.myjavaapp.Model.database.HandleDataToRoom;
-import com.example.myjavaapp.Model.entity.Cart;
-import com.example.myjavaapp.Model.entity.CartDetail;
-import com.example.myjavaapp.Model.entity.CartDetailAndCart;
-import com.example.myjavaapp.Model.entity.Order;
-import com.example.myjavaapp.Model.entity.User;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.Adapter.ViewPagerAdapter;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.List;
 import java.util.Random;
 
 
@@ -59,7 +42,6 @@ public class mainActivity extends AppCompatActivity {
 
     private HandleDataToRoom handleDataToRoom = new HandleDataToRoom(this);
     private LocalCartViewModel cartViewModel;
-    private LocalOrderViewModel orderViewModel;
     private LocalCartDetailViewModel cartDetailViewModel;
     private LocalUserViewModel userViewModel;
 
