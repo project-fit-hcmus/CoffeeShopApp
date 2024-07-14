@@ -26,6 +26,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_marginTop="10dp"
             android:src="@drawable/baseline_check_circle_outline_24"
             android:id="@+id/checkicon"
             app:layout_constraintTop_toTopOf="parent"
@@ -33,6 +34,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="330dp"
             android:id="@+id/orderAddress"
             android:text="An lưu, Phú Mỹ, Phú Vang, Thừa Thiên Huế"
             android:textColor="@color/black"

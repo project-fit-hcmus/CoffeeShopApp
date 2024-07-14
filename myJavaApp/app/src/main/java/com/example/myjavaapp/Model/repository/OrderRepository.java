@@ -33,4 +33,16 @@ public class OrderRepository {
     public LiveData<Order> getOrderItem(String id){
         return orderDAO.getOrer(id);
     }
+    public void InsertAll(List<Order> list){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            orderDAO.insertAll(list);
+        });
+    }
+    public void Insert(Order item){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                orderDAO.insert(item);
+            });
+        });
+    }
 }

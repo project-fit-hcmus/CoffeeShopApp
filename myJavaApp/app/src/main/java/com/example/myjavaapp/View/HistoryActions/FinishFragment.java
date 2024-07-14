@@ -27,6 +27,7 @@ import com.example.myjavaapp.Model.entity.Order;
 import com.example.myjavaapp.Model.entity.OrderDetailAndBeverage;
 import com.example.myjavaapp.R;
 import com.example.myjavaapp.View.Interfaces.OrderItemClickListener;
+import com.example.myjavaapp.View.RepurchaseActivity;
 import com.example.myjavaapp.View.ReviewActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +41,8 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
     private LocalODAndBEViewModel ODAndBeViewModel;
     private static final int INTENT_REVIEW_ACTIVITY = 121212;
     private LocalCommentViewModel commentViewModel;
+    private static final int MOVE_TO_REPURCHASE = 101010;
+
 
 
     @Nullable
@@ -70,12 +73,10 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
     public void OnClickListener(String orderId) {
         RecyclerView recyclerViewDialog;
         Button  btnPurchase, btnReview;
-        ImageButton btnExit;
         // show dialog
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         View view = LayoutInflater.from(getContext()).inflate(R.layout.history_order_dialog, (ViewGroup)getView(), false);
         recyclerViewDialog = view.findViewById(R.id.recyclerViewDialog);
-        btnExit = view.findViewById(R.id.btnExit);
         btnPurchase = view.findViewById(R.id.btnPurchase);
         btnReview = view.findViewById(R.id.btnReview);
         ODAndBeViewModel.getAllItemsInOrder(orderId).observe(getViewLifecycleOwner(), new Observer<List<OrderDetailAndBeverage>>() {
@@ -113,11 +114,14 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
                 startActivityForResult(intent,INTENT_REVIEW_ACTIVITY);
             }
         });
-
-        btnExit.setOnClickListener(new View.OnClickListener() {     //ERROR
+        btnPurchase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getContext(), RepurchaseActivity.class);
+                Bundle data = new Bundle();
+                data.putString("orderId",orderId);
+                intent.putExtras(data);
+                startActivityForResult(intent, MOVE_TO_REPURCHASE);
             }
         });
 
@@ -126,5 +130,10 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
 
     }
 
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == MOVE_TO_REPURCHASE){
+        }
+    }
 }

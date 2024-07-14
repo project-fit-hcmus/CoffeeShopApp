@@ -46,7 +46,7 @@ public class SingleBeverageAdapter extends RecyclerView.Adapter<SingleBeverageAd
         OrderDetailAndBeverage item = data.get(position);
 
         holder.txtName.setText(item.beverage.getBeverageName());
-        holder.txtType.setText(item.beverage.getBeverageType());
+        holder.txtType.setText(item.type.getTypeName());
         holder.txtCost.setText(item.beverage.getBeverageCost());
         holder.txtQuantity.setText(String.valueOf(item.orderDetail.getOrderDetailQuantity()));
 

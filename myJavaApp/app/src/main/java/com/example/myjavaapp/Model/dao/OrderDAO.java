@@ -16,6 +16,8 @@ public interface OrderDAO {
     public LiveData<List<Order>> getAllOrder(String userId);
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertAll(List<Order> list);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public void insert(Order item);
 
     @Query("SELECT * FROM `Order` WHERE orderUser = :user AND orderStatus = :status")
     public LiveData<List<Order>> getAllOrderBaseOnStatus(String user, String status);

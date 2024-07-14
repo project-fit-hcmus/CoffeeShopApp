@@ -26,4 +26,10 @@ public class LocalOrderViewModel extends AndroidViewModel {
     public LiveData<Order> getOrderItem(String id){
             return mRepository.getOrderItem(id);
     }
+    public void InsertAll(List<Order> list){
+            mRepository.InsertAll(list);
+    }
+    public void Insert(Order item){
+            mRepository.Insert(item);
+    }
 }

@@ -19,4 +19,13 @@ public class LocalOrderDetailViewModel extends AndroidViewModel {
         super(application);
         this.mRepository = new OrderDetailRepository(application);
     }
+    public LiveData<List<OrderDetail>> getAllDetailWithOrderId(String orderId){
+        return mRepository.getAllDetailWithOrderId(orderId);
+    }
+    public void insertAll(List<OrderDetail> list){
+        mRepository.insertAll(list);
+    }
+    public void insert(OrderDetail item){
+        mRepository.insert(item);
+    }
 }

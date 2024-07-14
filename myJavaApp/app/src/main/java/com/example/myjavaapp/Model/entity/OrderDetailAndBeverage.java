@@ -8,10 +8,16 @@ import java.util.List;
 //Ref: "OrderDetail".order_detail_beverage < "Beverage".beverage_id
 // mối quan hệ 1 nhiều
 public class OrderDetailAndBeverage {
-    @Embedded public OrderDetail orderDetail;
+    @Embedded public Beverage beverage;
     @Relation(
-            parentColumn = "orderDetailBeverage",
-            entityColumn = "beverageId"
+            parentColumn = "beverageId",
+            entityColumn = "orderDetailBeverage"
     )
-    public Beverage beverage;
+    public OrderDetail orderDetail;
+    @Relation(
+            parentColumn = "beverageType",
+            entityColumn = "TypeId"
+    )
+    public Type type;
 }
+
