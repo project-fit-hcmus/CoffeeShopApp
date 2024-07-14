@@ -40,11 +40,11 @@ public class DeliveringFragment extends Fragment implements OrderItemClickListen
     private LocalOrderViewModel orderViewModel;
     private LocalODAndBEViewModel  ODAndBeViewModel;
     private LocalOrderDetailViewModel orderDetailViewModel;
+    private SingleItemAdapter adapter;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.single_history_order_screen, container,false );
-        Toast.makeText(getContext(),"Delivering screen",Toast.LENGTH_SHORT).show();
         recyclerView = view.findViewById(R.id.historyRecyclerView);
         user = FirebaseAuth.getInstance().getCurrentUser();
         orderViewModel = new ViewModelProvider((ViewModelStoreOwner) getContext()).get(LocalOrderViewModel.class);
@@ -54,15 +54,12 @@ public class DeliveringFragment extends Fragment implements OrderItemClickListen
         orderViewModel.getAllOrderBaseOnStatus(user.getUid(), "Delivering").observe(getViewLifecycleOwner(), new Observer<List<Order>>() {
             @Override
             public void onChanged(List<Order> orders) {
-                SingleItemAdapter adapter = new SingleItemAdapter(getContext(),orders);
+                adapter = new SingleItemAdapter(getContext(),orders);
                 adapter.setListener(DeliveringFragment.this);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(),1));
             }
         });
-
-
-
         return  view;
     }
 
@@ -96,39 +93,14 @@ public class DeliveringFragment extends Fragment implements OrderItemClickListen
         btnPurchase.setBackground(getResources().getDrawable(R.drawable.botron_button_unclick));
 
         dialog.setView(view);
-        AlertDialog alert = dialog.create();
-
-        btnReview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-            }
-        });
-
-
         dialog.show();
     }
 
-    public static String randomId() {
-        StringBuilder str = new StringBuilder();
-        Random rand = new Random();
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String numbers = "0123456789";
-        for (int i = 0; i < 3; ++i) {
-            str.append(characters.charAt(rand.nextInt(characters.length())));
-        }
-        for (int i = 0; i < 2; ++i) {
-            str.append(numbers.charAt(rand.nextInt(numbers.length())));
-        }
-        return str.toString();
-    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(adapter != null)
+            Toast.makeText(getContext(), "resume : " + adapter.getItemCount(),Toast.LENGTH_SHORT).show();
 
-    public static String getCurrentDate() {
-
-        Calendar calendar = Calendar.getInstance();
-        String str = "";
-        str += String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)) + "/"
-                + String.valueOf(calendar.get(Calendar.MONTH) + 1) + "/" + String.valueOf(calendar.get(Calendar.YEAR));
-        return str;
     }
 }

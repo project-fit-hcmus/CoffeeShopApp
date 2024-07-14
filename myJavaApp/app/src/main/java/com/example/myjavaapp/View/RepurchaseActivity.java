@@ -149,7 +149,7 @@ public class RepurchaseActivity extends AppCompatActivity implements ReOrderItem
                 String orderDate = getCurrentDate();
                 String cost = txtTotalCost.getText().toString();
                 cost = cost.substring(0, cost.length()-1);
-                Order order = new Order(orderId, user.getUid(), edtPhone.getText().toString(), edtNote.getText().toString(), txtAddress.getText().toString(), Integer.parseInt(cost), "Delivering", orderDate, choosen.get(0).beverage.getBeverageImage(), false,  choosen.get(0).beverage.getBeverageImage());
+                Order order = new Order(orderId, user.getUid(), edtPhone.getText().toString(), edtNote.getText().toString(), txtAddress.getText().toString(), Integer.parseInt(cost), "Delivering", orderDate, false,  choosen.get(0).beverage.getBeverageImage());
                 DatabaseReference refOrder = FirebaseDatabase.getInstance().getReference("orders");
                 DatabaseReference refDetail = FirebaseDatabase.getInstance().getReference("orderdetails");
                 refOrder.child(orderId).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {

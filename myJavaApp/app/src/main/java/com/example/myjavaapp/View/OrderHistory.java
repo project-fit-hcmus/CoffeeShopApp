@@ -2,9 +2,12 @@ package com.example.myjavaapp.View;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -45,10 +48,12 @@ public class OrderHistory extends AppCompatActivity implements View.OnClickListe
         viewPagerAdapter = new ViewPagerAdapter(this);
         viewPager2.setAdapter(viewPagerAdapter);
 
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager2.setCurrentItem(tab.getPosition());
+                Toast.makeText(OrderHistory.this, String.valueOf(tab.getPosition()), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -58,15 +63,8 @@ public class OrderHistory extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
-
-
-
-
-
-
         imgBack.setOnClickListener(this);
     }
 

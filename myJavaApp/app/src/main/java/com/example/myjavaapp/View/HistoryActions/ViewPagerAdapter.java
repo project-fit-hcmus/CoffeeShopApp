@@ -15,15 +15,21 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch (position){
-            case 0:
-                return new DeliveringFragment();
-            case 1:
-                return new FinishFragment();
-            default:
-                return new DeliveringFragment();
+        try{
+            switch (position){
+                case 0:
+                    return new DeliveringFragment();
+                case 1:
+                    return new FinishFragment();
+                default:
+                    throw new IllegalArgumentException("Invalid position: " + position);
 
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            return new DeliveringFragment();
         }
+
     }
 
     @Override

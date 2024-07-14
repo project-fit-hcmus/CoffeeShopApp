@@ -55,7 +55,7 @@ public class SingleItemAdapter extends RecyclerView.Adapter<SingleItemAdapter.My
         Log.d("PHONE",item.getOrderPhone());
         Log.d("STATUS",item.getOrderStatus());
         Log.d("COST",String.valueOf(item.getOrderCost()));
-        String name = item.getOrderOveralImage();
+        String name = item.getOrderCover();
         StorageReference storageReference = FirebaseStorage.getInstance().getReference("images/beverages/" + name);
         Task<Uri> downloadUrlTask = storageReference.getDownloadUrl();
         downloadUrlTask = downloadUrlTask.addOnCompleteListener(new OnCompleteListener<Uri>() {

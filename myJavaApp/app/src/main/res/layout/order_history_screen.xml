@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/color_1_fifth"
     android:orientation="vertical">
     <LinearLayout
@@ -9,7 +11,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/historyHeader"
         android:background="@color/main_color"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:ignore="MissingConstraints">
         <include
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +26,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/historyTabs"
-        android:background="@color/main_color">
+        android:background="@color/main_color"
+        app:layout_constraintTop_toBottomOf="@+id/historyHeader"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        tools:ignore="MissingConstraints">
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,7 +48,12 @@
     </com.google.android.material.tabs.TabLayout>
     <androidx.viewpager2.widget.ViewPager2
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:background="@color/color_1_fifth"
-        android:id="@+id/historyViewPager"/>
-</LinearLayout>
+        android:id="@+id/historyViewPager"
+        app:layout_constraintTop_toBottomOf="@id/historyTabs"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:ignore="MissingConstraints" />
+</androidx.constraintlayout.widget.ConstraintLayout>

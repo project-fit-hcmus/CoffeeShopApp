@@ -190,7 +190,7 @@ public class HandleDataToRoom {
                 if(dataSnapshot != null){
                     for(DataSnapshot i : dataSnapshot.getChildren()){
                         if(i.child("orderUser").getValue(String.class).contains(id))
-                            temp.add(new Order(i.child("orderId").getValue(String.class),i.child("orderUser").getValue(String.class),i.child("orderPhone").getValue(String.class),i.child("orderNote").getValue(String.class), i.child("orderAddress").getValue(String.class),i.child("orderCost").getValue(Integer.class),i.child("orderStatus").getValue(String.class),i.child("orderDate").getValue(String.class),i.child("orderOveralImage").getValue(String.class), i.child("isRating").getValue(Boolean.class), i.child("orderCover").getValue(String.class)));
+                            temp.add(new Order(i.child("orderId").getValue(String.class),i.child("orderUser").getValue(String.class),i.child("orderPhone").getValue(String.class),i.child("orderNote").getValue(String.class), i.child("orderAddress").getValue(String.class),i.child("orderCost").getValue(Integer.class),i.child("orderStatus").getValue(String.class),i.child("orderDate").getValue(String.class), i.child("isRating").getValue(Boolean.class), i.child("orderCover").getValue(String.class)));
                         Log.d("AFTER READ FAVORITE", String.valueOf(temp.size()));
                     }
                     new Thread(new Runnable() {

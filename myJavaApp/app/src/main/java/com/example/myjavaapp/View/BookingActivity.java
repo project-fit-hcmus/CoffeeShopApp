@@ -148,7 +148,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
             String orderId = randomId();
 
 
-            Order order = new Order(orderId, user.getUid(),edtPhone.getText().toString(),edtNote.getText().toString(),txtAddr.getText().toString(),Integer.parseInt(txtTotalCost.getText().toString().substring(0,txtTotalCost.getText().toString().indexOf("$"))),"Delivering",getCurrentDate(),adapter.getData().get(0).beverage.getBeverageImage(),false,adapter.getData().get(0).beverage.getBeverageImage() );
+            Order order = new Order(orderId, user.getUid(),edtPhone.getText().toString(),edtNote.getText().toString(),txtAddr.getText().toString(),Integer.parseInt(txtTotalCost.getText().toString().substring(0,txtTotalCost.getText().toString().indexOf("$"))),"Delivering",getCurrentDate(),false,adapter.getData().get(0).beverage.getBeverageImage() );
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("orders");
             ref.child(orderId).setValue(order);
             //create order detail
