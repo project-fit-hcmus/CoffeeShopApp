@@ -1,5 +1,6 @@
 package com.example.myjavaapp.View.HistoryActions;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -41,7 +42,7 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
     private static final int INTENT_REVIEW_ACTIVITY = 121212;
     private LocalCommentViewModel commentViewModel;
     private static final int MOVE_TO_REPURCHASE = 101010;
-
+    private AlertDialog showLayout = null;
 
 
     @Nullable
@@ -103,6 +104,10 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
             }
         });
 
+        dialog.setView(view);
+        showLayout = dialog.show();
+
+
         btnReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,6 +116,7 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
                 data.putString("orderId",orderId);
                 intent.putExtras(data);
                 startActivityForResult(intent,INTENT_REVIEW_ACTIVITY);
+
             }
         });
         btnPurchase.setOnClickListener(new View.OnClickListener() {
@@ -121,11 +127,9 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
                 data.putString("orderId",orderId);
                 intent.putExtras(data);
                 startActivityForResult(intent, MOVE_TO_REPURCHASE);
+
             }
         });
-
-        dialog.setView(view);
-        dialog.show();
 
     }
 
@@ -133,6 +137,7 @@ public class FinishFragment extends Fragment implements OrderItemClickListener {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == MOVE_TO_REPURCHASE){
+            showLayout.dismiss();       // FAILED
         }
     }
 }

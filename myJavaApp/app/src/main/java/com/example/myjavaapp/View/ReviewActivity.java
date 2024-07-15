@@ -1,8 +1,11 @@
 package com.example.myjavaapp.View;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -50,7 +54,6 @@ public class ReviewActivity extends AppCompatActivity implements View.OnClickLis
     private float value = 0.0f;
     private LocalCommentViewModel commentViewModel;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +76,6 @@ public class ReviewActivity extends AppCompatActivity implements View.OnClickLis
         txtTitle.setText("Review");
         user = FirebaseAuth.getInstance().getCurrentUser();
         commentViewModel = new ViewModelProvider(this).get(LocalCommentViewModel.class);
-
 
 
         orderViewModel = new ViewModelProvider(this).get(LocalOrderViewModel.class);
@@ -152,18 +154,43 @@ public class ReviewActivity extends AppCompatActivity implements View.OnClickLis
             String id = randomId();
             Comment item = new Comment(id, user.getUid(), orderId, comment.getText().toString(), value, getCurrentDate());
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("comments");
+            DatabaseReference refCmt = FirebaseDatabase.getInstance().getReference("orders");
             ref.child(id).setValue(item).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
                         commentViewModel.insert(item);
+                        refCmt.child(orderId).child("isRating").setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    orderViewModel.UpdateRatingStatus(orderId);
+                                }
+                            }
+                        });
                     }else{
                         Toast.makeText(ReviewActivity.this, "Failed to review this order!!!",Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-            setResult(RESULT_OK);
-            finish();
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(ReviewActivity.this);
+            View view = LayoutInflater.from(ReviewActivity.this).inflate(R.layout.booking_success_dialog,null, false);
+            @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView txtFirst = view.findViewById(R.id.txtFirstLine);
+            @SuppressLint({"MissingInflatedId", "LocalSuppress"}) TextView txtSecond = view.findViewById(R.id.txtSecondLine);
+            txtSecond.setText("");
+            txtFirst.setText("Your review has been posted successfully");
+            dialog.setView(view);
+            dialog.show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.setCancelable(true);
+                    setResult(RESULT_OK);
+                    finish();
+                }
+            }, 2500);
+
         }
 
     }

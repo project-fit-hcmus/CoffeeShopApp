@@ -39,10 +39,13 @@ public class OrderRepository {
         });
     }
     public void Insert(Order item){
-        AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase.databaseWriteExecutor.execute(() -> {
                 orderDAO.insert(item);
             });
+    }
+    public void UpdateRatingStatus(String orderId){
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            orderDAO.updateRatingForOrder(orderId, true);
         });
     }
 }

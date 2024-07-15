@@ -89,7 +89,7 @@ dependencies {
     //recycle view
     implementation("androidx.recyclerview:recyclerview:1.1.0")
 
-    //using gooole location api
+    //using google location api
 
 //    //noinspection GradleCompatible
     implementation("com.google.android.gms:play-services-maps:18.2.0")

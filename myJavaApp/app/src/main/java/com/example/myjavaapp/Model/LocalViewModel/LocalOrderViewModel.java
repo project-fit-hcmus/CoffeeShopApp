@@ -32,4 +32,7 @@ public class LocalOrderViewModel extends AndroidViewModel {
     public void Insert(Order item){
             mRepository.Insert(item);
     }
+    public void UpdateRatingStatus(String orderId){
+            mRepository.UpdateRatingStatus(orderId);
+    }
 }

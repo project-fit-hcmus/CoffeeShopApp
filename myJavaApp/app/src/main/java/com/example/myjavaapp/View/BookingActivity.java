@@ -185,7 +185,7 @@ public class BookingActivity extends AppCompatActivity implements View.OnClickLi
                     setResult(RESULT_OK);
                     finish();
                 }
-            }, 5000);
+            }, 2500);
 
 
 

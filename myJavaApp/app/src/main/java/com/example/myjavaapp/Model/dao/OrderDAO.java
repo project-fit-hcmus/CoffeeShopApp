@@ -23,4 +23,6 @@ public interface OrderDAO {
     public LiveData<List<Order>> getAllOrderBaseOnStatus(String user, String status);
     @Query("SELECT * FROM `Order` WHERE orderId = :id")
     public LiveData<Order> getOrer(String id);
+    @Query("UPDATE `Order` SET isRating = :value WHERE orderId = :id")
+    public void updateRatingForOrder(String id, boolean value);
 }
